@@ -58,7 +58,6 @@ plt.ylabel('ylabel')
 plt.show()
 
 # 11) Speichern Sie den Plot (ohne in vorher anzuzeigen!) als PDF ab
-
 plt.plot(x4, label='x4', c='r')
 plt.plot(sorted(x4), label='x4_sorted', c='g')
 plt.plot(sorted(x4, reverse=True), label='x4_sorted_reverse', c='b')
