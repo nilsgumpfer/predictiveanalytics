@@ -147,15 +147,16 @@ def train(label, activation_function, epochs, learning_rate, weight_init):
     perceptron = Perceptron(activation_function=activation_function, epochs=epochs, learning_rate=learning_rate, weight_init=weight_init)
     perceptron.train(training_inputs, labels)
 
+    print('\n')
     for x in validation_inputs:
-        print('\n', x, '-->', perceptron.predict(x))
+        print(x, '-->', perceptron.predict(x))
 
     predictions = []
 
     for x in training_inputs:
         predictions.append(perceptron.predict(x))
 
-    print('\n', 'Learned weights: w1={}, w2={}, wb={}'.format(perceptron.weights[1], perceptron.weights[2], perceptron.weights[0]))
+    print('Learned weights: w1={}, w2={}, wb={}'.format(perceptron.weights[1], perceptron.weights[2], perceptron.weights[0]))
 
     plot_training_data_and_activations(training_inputs, labels, predictions)
 
@@ -197,7 +198,7 @@ def gradient(label, activation_function, epochs, learning_rate, weight_init):
 
     final_e = mean_squared_error(labels, predictions)
 
-    print('\n', 'Learned weights: w1={}, w2={}, wb=None'.format(perceptron.weights[1], perceptron.weights[2]))
+    print('Learned weights: w1={}, w2={}, wb=None'.format(perceptron.weights[1], perceptron.weights[2]))
 
     plot_error_gradient(weights1, weights2, errors, final_w1=perceptron.weights[1], final_w2=perceptron.weights[2], final_e=final_e)
 

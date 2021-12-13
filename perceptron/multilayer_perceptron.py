@@ -116,8 +116,9 @@ def train(label, epochs, learning_rate):
     mlp = MultiLayerPerceptron(epochs=epochs, learning_rate=learning_rate)
     mlp.train(training_inputs, labels)
 
+    print('\n')
     for x in validation_inputs:
-        print('\n', x, '-->', mlp.predict([x])[0])
+        print(x, '-->', mlp.predict([x])[0])
 
     predictions = []
 
