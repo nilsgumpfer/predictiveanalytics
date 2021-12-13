@@ -53,21 +53,22 @@ def generate_data(n, label):
             else:
                 Y.append(0)
 
-        X.append([x1/100, x2/100])
+        X.append([x1 / 100, x2 / 100])
 
     return np.asarray(X), np.asarray(Y)
 
 
 class Perceptron2(object):
-    def __init__(self, no_of_inputs=2, epochs=200, learning_rate=0.01, activation_function='binary', bias=True, weight_init=0.0):
+    def __init__(self, no_of_inputs=2, epochs=200, learning_rate=0.01, activation_function='binary', bias=True,
+                 weight_init=0.0):
         self.epochs = epochs
         self.no_of_inputs = no_of_inputs
         self.learning_rate = learning_rate
         self.weights = np.ones(no_of_inputs + 1) * weight_init
         self.activation_function = activation_function
         self.bias = bias
-        self.history_error = np.zeros((epochs+1,))
-        self.history_weights = np.zeros((no_of_inputs, epochs+1))
+        self.history_error = np.zeros((epochs + 1,))
+        self.history_weights = np.zeros((no_of_inputs, epochs + 1))
 
     def predict(self, inputs):
         if self.bias:
@@ -78,7 +79,7 @@ class Perceptron2(object):
         return self._activation(summation)
 
     def train(self, training_inputs, labels):
-        for e in range(self.epochs+1):
+        for e in range(self.epochs + 1):
             predictions = []
 
             for inputs, label in zip(training_inputs, labels):
@@ -94,7 +95,7 @@ class Perceptron2(object):
             self.history_error[e] = mean_squared_error(labels, predictions)
 
             for i in range(self.no_of_inputs):
-                self.history_weights[i][e] = self.weights[i+1]
+                self.history_weights[i][e] = self.weights[i + 1]
 
     def _activation(self, summation):
         if self.activation_function == 'binary':
@@ -150,7 +151,8 @@ def gradient(label, activation_function, epochs, learning_rate, weight_init):
     np.random.seed(1)
     training_inputs, labels = generate_data(100, label)
 
-    perceptron = Perceptron2(activation_function=activation_function, bias=False, no_of_inputs=2, epochs=epochs, learning_rate=learning_rate)
+    perceptron = Perceptron2(activation_function=activation_function, bias=False, no_of_inputs=2, epochs=epochs,
+                             learning_rate=learning_rate)
 
     weights1 = []
     weights2 = []
@@ -184,17 +186,19 @@ def gradient(label, activation_function, epochs, learning_rate, weight_init):
     # Azimuth and elevation specifiy camera perspective. To generate a cinematic camera swing around the plot,
     # we change azimuth and elevation in each plot. For this, n=epochs values are generated for each parameter.
     # To adapt the start and endpoints, simply adapt start and stop values below.
-    azims = np.arange(start=100, stop=150, step=50/epochs)
-    elevs = np.arange(start=20, stop=0, step=-20/epochs)
+    azims = np.arange(start=100, stop=150, step=50 / epochs)
+    elevs = np.arange(start=20, stop=0, step=-20 / epochs)
 
     paths = []
 
-    os.makedirs('plots/', exist_ok=True)
+    os.makedirs('plots/frames/', exist_ok=True)
 
-    params = '{}_{}_{}_{}'.format(label, activation_function, epochs, str(learning_rate).replace('.', '-'))
+    params = '{}_{}_{}_{}_{}'.format(label, activation_function, epochs, str(learning_rate).replace('.', '-'),
+                                     weight_init)
 
-    for epoch, w1, w2, e, azim, elev in zip(range(epochs+1), perceptron.history_weights[0], perceptron.history_weights[1], perceptron.history_error, azims, elevs):
-        path = 'plots/gradientdescent_{}_{}.png'.format(params, epoch)
+    for epoch, w1, w2, e, azim, elev in zip(range(epochs + 1), perceptron.history_weights[0],
+                                            perceptron.history_weights[1], perceptron.history_error, azims, elevs):
+        path = 'plots/frames/gradientdescent_{}_{}.png'.format(params, epoch)
         paths.append(path)
         plot_error_gradient(epoch, weights1, weights2, errors, w1=w1, w2=w2, e=e, azim=azim, elev=elev, save_to=path)
 
@@ -202,13 +206,62 @@ def gradient(label, activation_function, epochs, learning_rate, weight_init):
     generate_gif_from_plots(paths, params)
 
 
-# gradient(label='AND', activation_function='tanh', epochs=40, learning_rate=0.002)
-# gradient(label='AND', activation_function='tanh', epochs=40, learning_rate=0.0005)
-# gradient(label='AND', activation_function='tanh', epochs=40, learning_rate=0.001)
-# gradient(label='AND', activation_function='tanh', epochs=40, learning_rate=0.002)
-# gradient(label='AND', activation_function='tanh', epochs=40, learning_rate=0.003)
-# gradient(label='AND', activation_function='tanh', epochs=40, learning_rate=0.004)
-# gradient(label='AND', activation_function='tanh', epochs=40, learning_rate=0.005)
+# Examples from slides
+gradient(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
+gradient(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
+gradient(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
 
-# gradient(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
-gradient(label='OR', activation_function='binary', epochs=50, learning_rate=0.01, weight_init=-1.0)
+gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
+gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
+gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
+
+# Different start points / weight initializations
+gradient(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=-1.0)
+gradient(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=-1.0)
+gradient(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=-1.0)
+
+gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
+gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
+gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
+
+gradient(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=1.0)
+gradient(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=1.0)
+gradient(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=1.0)
+
+gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=1.0)
+gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=1.0)
+gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=1.0)
+
+# More epochs necessary for different start points
+gradient(label='AND', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=-1.0)
+gradient(label='OR', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=-1.0)
+gradient(label='XOR', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=-1.0)
+
+gradient(label='AND', activation_function='relu', epochs=100, learning_rate=0.001, weight_init=-1.0)
+gradient(label='OR', activation_function='relu', epochs=100, learning_rate=0.001, weight_init=-1.0)
+gradient(label='XOR', activation_function='relu', epochs=100, learning_rate=0.001, weight_init=-1.0)
+
+gradient(label='AND', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=1.0)
+gradient(label='OR', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=1.0)
+gradient(label='XOR', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=1.0)
+
+gradient(label='AND', activation_function='relu', epochs=100, learning_rate=0.001, weight_init=1.0)
+gradient(label='OR', activation_function='relu', epochs=100, learning_rate=0.001, weight_init=1.0)
+gradient(label='XOR', activation_function='relu', epochs=100, learning_rate=0.001, weight_init=1.0)
+
+# Effects of different learning rates
+gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.0005, weight_init=-1.0)
+gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.0005, weight_init=-1.0)
+gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.0005, weight_init=-1.0)
+
+gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
+gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
+gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
+
+gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.002, weight_init=-1.0)
+gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.002, weight_init=-1.0)
+gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.002, weight_init=-1.0)
+
+gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.005, weight_init=-1.0)
+gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.005, weight_init=-1.0)
+gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.005, weight_init=-1.0)

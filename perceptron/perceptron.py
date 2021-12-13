@@ -41,6 +41,7 @@ def plot_error_gradient(W1, W2, E, final_w1, final_w2, final_e):
     ax.set_zlim([0, 1])
     ax.set_zticks([0, 0.25, 0.5, 0.75, 1])
     ax.set_zlabel('Error')
+    # plt.tight_layout()
     plt.show()
 
 
@@ -147,12 +148,14 @@ def train(label, activation_function, epochs, learning_rate, weight_init):
     perceptron.train(training_inputs, labels)
 
     for x in validation_inputs:
-        print(x, '-->', perceptron.predict(x))
+        print('\n', x, '-->', perceptron.predict(x))
 
     predictions = []
 
     for x in training_inputs:
         predictions.append(perceptron.predict(x))
+
+    print('\n', 'Learned weights: w1={}, w2={}, wb={}'.format(perceptron.weights[1], perceptron.weights[2], perceptron.weights[0]))
 
     plot_training_data_and_activations(training_inputs, labels, predictions)
 
@@ -194,16 +197,37 @@ def gradient(label, activation_function, epochs, learning_rate, weight_init):
 
     final_e = mean_squared_error(labels, predictions)
 
+    print('\n', 'Learned weights: w1={}, w2={}, wb=None'.format(perceptron.weights[1], perceptron.weights[2]))
+
     plot_error_gradient(weights1, weights2, errors, final_w1=perceptron.weights[1], final_w2=perceptron.weights[2], final_e=final_e)
 
 
-# train(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
-# train(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
-# train(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
+# Examples from slides
+train(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
+train(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
+train(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
 
-# train(label='AND', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
-# train(label='OR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
-# train(label='XOR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
+train(label='AND', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
+train(label='OR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
+train(label='XOR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
 
-# gradient(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
-gradient(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=-1.0)
+gradient(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
+gradient(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
+gradient(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
+
+gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
+gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
+gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
+
+gradient(label='AND', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
+gradient(label='OR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
+gradient(label='XOR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
+
+# Different activations sometimes require different number of epochs or learning rate
+train(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
+train(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
+train(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
+
+train(label='AND', activation_function='relu', epochs=500, learning_rate=0.001, weight_init=0.0)
+train(label='OR', activation_function='relu', epochs=500, learning_rate=0.001, weight_init=0.0)
+train(label='XOR', activation_function='relu', epochs=500, learning_rate=0.001, weight_init=0.0)

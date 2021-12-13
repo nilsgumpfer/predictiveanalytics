@@ -105,7 +105,7 @@ class MultiLayerPerceptron:
             self.hidden_bias += np.sum(d_hidden_layer, axis=0, keepdims=True) * self.lr
 
 
-def train(label, activation_function, epochs, learning_rate):
+def train(label, epochs, learning_rate):
     np.random.seed(1)
     validation_inputs = [np.array([1, 1]), np.array([1, 0]), np.array([0, 1]), np.array([0, 0])]
     training_inputs, labels = generate_data(100, label)
@@ -117,7 +117,7 @@ def train(label, activation_function, epochs, learning_rate):
     mlp.train(training_inputs, labels)
 
     for x in validation_inputs:
-        print(x, '-->', mlp.predict([x])[0])
+        print('\n', x, '-->', mlp.predict([x])[0])
 
     predictions = []
 
@@ -127,4 +127,7 @@ def train(label, activation_function, epochs, learning_rate):
     plot_training_data_and_activations(training_inputs, labels, predictions)
 
 
-train(label='XOR', activation_function=None, epochs=1000, learning_rate=0.2)
+# Examples from slides
+train(label='XOR', epochs=1000, learning_rate=0.2)
+train(label='AND', epochs=1000, learning_rate=0.2)
+train(label='OR', epochs=1000, learning_rate=0.2)

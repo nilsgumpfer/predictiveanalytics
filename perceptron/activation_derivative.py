@@ -45,7 +45,7 @@ def activation_derivative(x, activation_function):
         return 1 / (1 + math.e ** -x)
 
 
-def main(activation_function='sigmoid'):
+def main(activation_function='relu'):
     X = np.arange(start=-2, stop=2, step=0.1)
     Y = [activation(x, activation_function) for x in X]
 
