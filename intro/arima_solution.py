@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 from statsmodels.tsa.arima.model import ARIMA
 
 # Load data
-df = pd.read_csv('data/airline-passengers.csv', header=0)
+df = pd.read_csv('../data/airline-passengers.csv', header=0)
 
 # Extract column 'Passengers'
 values = df['Passengers'].values

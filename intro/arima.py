@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 from statsmodels.tsa.arima.model import ARIMA
 
 
-df = pd.read_csv('data/airline-passengers.csv')
+df = pd.read_csv('../data/airline-passengers.csv')
 values = df['Passengers'].values
 
 plt.figure(figsize=(15, 10))

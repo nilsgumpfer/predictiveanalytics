@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
 
-df = pd.read_csv('data/airline-passengers.csv', index_col=0, parse_dates=True)
+df = pd.read_csv('../data/airline-passengers.csv', index_col=0, parse_dates=True)
 # print(df)
 # print(type(df.index[0]))
 # print(list(df['Passengers']))
