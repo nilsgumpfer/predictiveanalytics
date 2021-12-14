@@ -13,8 +13,9 @@ from tensorflow.python.keras.utils.vis_utils import plot_model
 
 
 # Load train and test data
-(train_images, train_labels), (test_images, test_labels) = mnist.load_data()
+(train_images, train_labels), (test_images, test_labels) = mnist.load_data() # 0.9904999732971191
 # (train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()  # 0.910099983215332
+# TODO: check overfitting capability
 
 # Plot 100 training images
 fig, ax = plt.subplots(nrows=10, ncols=10, figsize=(10, 10))
