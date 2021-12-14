@@ -131,4 +131,6 @@ dmypy.json
 # Pycharm stuff
 .idea
 
+# Own stuff
 /perceptron/plots/
+/cnns/tensorboard/
