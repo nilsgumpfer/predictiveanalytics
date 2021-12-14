@@ -50,7 +50,7 @@ config = {'conv_layers': 4,
           'fc_dropout_rate': 0.1,
           'optimizer': 'adam',
           'loss': 'categorical_crossentropy',
-          'epochs': 2}
+          'epochs': 10}
 
 # Define model architecture
 model = Sequential()
