@@ -13,8 +13,8 @@ from tensorflow.python.keras.utils.vis_utils import plot_model
 
 
 # Load train and test data
-# (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
-(train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()
+(train_images, train_labels), (test_images, test_labels) = mnist.load_data()
+# (train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()  # 0.910099983215332
 
 # Plot 100 training images
 fig, ax = plt.subplots(nrows=10, ncols=10, figsize=(10, 10))
@@ -52,7 +52,7 @@ config = {'conv_layers': 2,
           'conv_dropout_rate': 0.1,
           'maxpool_stride': 2,
           'maxpool_kernel_size': 2,
-          'fc_layers': 1,
+          'fc_layers': 2,
           'fc_neurons': 100,
           'fc_activation_function': 'relu',
           'fc_initializer': 'he_uniform',
