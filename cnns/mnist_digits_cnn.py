@@ -6,6 +6,7 @@ from tensorflow.python.keras.callbacks import TensorBoard
 from tensorflow.python.keras.datasets import mnist
 from tensorflow.python.keras.layers import Conv1D, MaxPool1D, Dropout, GlobalAveragePooling1D, Dense
 from tensorflow.python.keras.utils.np_utils import to_categorical
+from tensorflow.python.keras.utils.vis_utils import plot_model
 
 # Load train and test data
 (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
@@ -15,6 +16,7 @@ fig, ax = plt.subplots(nrows=10, ncols=10, figsize=(10, 10))
 axs = ax.ravel()
 for i in range(100):
     axs[i].imshow(train_images[i], cmap='Greys')
+    axs[i].axis('off')
 
 plt.tight_layout()
 plt.savefig('../data/mnist_digits_100.jpg')
@@ -48,7 +50,7 @@ config = {'conv_layers': 4,
           'fc_dropout_rate': 0.1,
           'optimizer': 'adam',
           'loss': 'categorical_crossentropy',
-          'epochs': 20}
+          'epochs': 2}
 
 # Define model architecture
 model = Sequential()
@@ -78,6 +80,14 @@ model.compile(optimizer=config['optimizer'], loss=config['loss'], metrics=['accu
 
 # Print model architecture
 model.summary()
+
+# Visualize model
+plot_model(model=model,
+           to_file='../data/mnist_cnn.jpg',
+           show_shapes=True,
+           show_layer_names=False,
+           expand_nested=False,
+           dpi=100)
 
 # Tensorboard callback
 tensorboard_callback = TensorBoard(log_dir='tensorboard/' + 'mnist_digits_cnn_' + datetime.utcnow().strftime('%Y%m%d%H%M%S'))
