@@ -12,8 +12,8 @@ from tensorflow.python.keras.utils.vis_utils import plot_model
 
 
 # Load train and test data
-# ((train_images, train_labels), (test_images, test_labels)), ds_name = mnist.load_data(), 'digits'
-((train_images, train_labels), (test_images, test_labels)), ds_name = fashion_mnist.load_data(), 'fashion'
+((train_images, train_labels), (test_images, test_labels)), ds_name = mnist.load_data(), 'digits'
+# ((train_images, train_labels), (test_images, test_labels)), ds_name = fashion_mnist.load_data(), 'fashion'
 
 # Plot 100 training images
 fig, ax = plt.subplots(nrows=10, ncols=10, figsize=(10, 10))
@@ -111,4 +111,4 @@ model.fit(x=train_images, y=train_labels, epochs=config['epochs'], validation_da
 
 # Evaluate model
 test_loss, test_acc = model.evaluate(test_images, test_labels)
-print('MNIST {} model - test accuracy:'.format(ds_name), test_acc)
+print('MNIST {} model - test accuracy: {:.2f}'.format(ds_name, test_acc))
