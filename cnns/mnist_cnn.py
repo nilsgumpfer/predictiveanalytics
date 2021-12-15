@@ -6,16 +6,14 @@ from tensorflow.python.keras import Sequential
 from tensorflow.python.keras.callbacks import TensorBoard
 from tensorflow.python.keras.datasets import mnist, fashion_mnist
 from tensorflow.python.keras.layers import Conv2D, MaxPool2D, GlobalAveragePooling2D, Dense, Dropout
-from tensorflow.python.keras.optimizer_v2.adam import Adam
 from tensorflow.python.keras.optimizer_v2.gradient_descent import SGD
 from tensorflow.python.keras.utils.np_utils import to_categorical
 from tensorflow.python.keras.utils.vis_utils import plot_model
 
 
 # Load train and test data
-(train_images, train_labels), (test_images, test_labels) = mnist.load_data() # 0.9904999732971191
-# (train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()  # 0.910099983215332
-# TODO: check overfitting capability
+# ((train_images, train_labels), (test_images, test_labels)), ds_name = mnist.load_data(), 'digits'
+((train_images, train_labels), (test_images, test_labels)), ds_name = fashion_mnist.load_data(), 'fashion'
 
 # Plot 100 training images
 fig, ax = plt.subplots(nrows=10, ncols=10, figsize=(10, 10))
@@ -25,7 +23,7 @@ for i in range(100):
     axs[i].axis('off')
 
 plt.tight_layout()
-plt.savefig('../data/mnist_100.jpg')
+plt.savefig('../data/mnist_{}_100.jpg'.format(ds_name))
 plt.close()
 
 # Normalize color values (here: grey-scales)
@@ -70,19 +68,23 @@ model = Sequential()
 model.add(Conv2D(input_shape=(28, 28, 1), filters=config['conv_filters'], kernel_size=config['conv_kernel_size'], padding=config['conv_padding'], activation=config['conv_activation_function'], kernel_initializer=config['conv_initializer']))
 model.add(MaxPool2D(strides=config['maxpool_stride'], pool_size=config['maxpool_kernel_size']))
 
-# Convolutional and dropout layers
+# Convolutional layers
 for i in range(config['conv_layers']):
     model.add(Conv2D(filters=config['conv_filters'], kernel_size=config['conv_kernel_size'], padding=config['conv_padding'], activation=config['conv_activation_function'], kernel_initializer=config['conv_initializer']))
     model.add(MaxPool2D(strides=config['maxpool_stride'], pool_size=config['maxpool_kernel_size']))
-    # model.add(Dropout(config['conv_dropout_rate']))
+
+    if config['conv_dropout_rate'] > 0.0:
+        model.add(Dropout(config['conv_dropout_rate']))
 
 # Global average pooling reduces number of dimensions
 model.add(GlobalAveragePooling2D())
 
-# Dense and dropout layers
+# Dense layers
 for i in range(config['fc_layers']):
     model.add(Dense(units=config['fc_neurons'], activation=config['fc_activation_function'], kernel_initializer=config['fc_initializer']))
-    # model.add(Dropout(config['fc_dropout_rate']))
+
+    if config['fc_dropout_rate'] > 0.0:
+        model.add(Dropout(config['fc_dropout_rate']))
 
 # Add last dense layer with neurons = number of classes
 model.add(Dense(units=nclasses, activation='softmax', kernel_initializer=config['fc_initializer']))
@@ -102,11 +104,11 @@ plot_model(model=model,
            dpi=100)
 
 # Tensorboard callback
-tensorboard_callback = TensorBoard(log_dir='tensorboard/' + 'mnist_cnn_' + datetime.utcnow().strftime('%Y%m%d%H%M%S'))
+tensorboard_callback = TensorBoard(log_dir='tensorboard/mnist_{}_cnn_{}'.format(ds_name, datetime.utcnow().strftime('%Y%m%d_%H-%M-%S')))
 
 # Train model
 model.fit(x=train_images, y=train_labels, epochs=config['epochs'], validation_data=(test_images, test_labels), callbacks=[tensorboard_callback])
 
 # Evaluate model
 test_loss, test_acc = model.evaluate(test_images, test_labels)
-print('Test accuracy:', test_acc)
+print('MNIST {} model - test accuracy:'.format(ds_name), test_acc)
