@@ -42,24 +42,24 @@ test_labels = to_categorical(test_labels)
 nclasses = np.shape(train_labels)[1]
 
 # Define hyperparameters in dictionary for flexible use
-config = {'conv_layers': 2,
-          'conv_filters': 64,
+config = {'conv_layers': 1,  # 2
+          'conv_filters': 16,  # 64
           'conv_kernel_size': 3,
           'conv_initializer': 'he_uniform',
           'conv_padding': 'same',
           'conv_activation_function': 'relu',
-          'conv_dropout_rate': 0.1,
+          'conv_dropout_rate': 0,  # 0.1
           'maxpool_stride': 2,
           'maxpool_kernel_size': 2,
           'fc_layers': 2,
-          'fc_neurons': 100,
+          'fc_neurons': 16,  # 100
           'fc_activation_function': 'relu',
           'fc_initializer': 'he_uniform',
-          'fc_dropout_rate': 0.1,
-          'learning_rate': 0.01,
+          'fc_dropout_rate': 0,  # 0.1
+          'learning_rate': 0.001,  # 0.01
           'momentum': 0.9,
           'loss': 'categorical_crossentropy',
-          'epochs': 10}
+          'epochs': 3}  # 10
 
 # Define model architecture
 model = Sequential()
