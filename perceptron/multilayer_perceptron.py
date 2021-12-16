@@ -129,6 +129,6 @@ def train(label, epochs, learning_rate):
 
 
 # Examples from slides
-train(label='XOR', epochs=1000, learning_rate=0.2)
-train(label='AND', epochs=1000, learning_rate=0.2)
+# train(label='XOR', epochs=1000, learning_rate=0.2)
+# train(label='AND', epochs=1000, learning_rate=0.2)
 train(label='OR', epochs=1000, learning_rate=0.2)
