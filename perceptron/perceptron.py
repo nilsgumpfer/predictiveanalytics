@@ -232,3 +232,7 @@ train(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, w
 train(label='AND', activation_function='relu', epochs=500, learning_rate=0.001, weight_init=0.0)
 train(label='OR', activation_function='relu', epochs=500, learning_rate=0.001, weight_init=0.0)
 train(label='XOR', activation_function='relu', epochs=500, learning_rate=0.001, weight_init=0.0)
+
+train(label='AND', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=0.0)
+train(label='OR', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=0.0)
+train(label='XOR', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=0.0)
