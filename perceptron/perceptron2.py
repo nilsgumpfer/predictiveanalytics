@@ -206,70 +206,69 @@ def gradient(label, activation_function, epochs, learning_rate, weight_init):
     generate_gif_from_plots(paths, params)
 
 
-# # Examples from slides
-# gradient(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
-# gradient(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
-# gradient(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
-#
-# gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
-# gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
-# gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
-#
-# # Different start points / weight initializations
-# gradient(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=-1.0)
-# gradient(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=-1.0)
-# gradient(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=-1.0)
-#
-# gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
-# gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
-# gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
-#
-# gradient(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=1.0)
-# gradient(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=1.0)
-# gradient(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=1.0)
-#
-# gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=1.0)
-# gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=1.0)
-# gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=1.0)
-#
-# # More epochs necessary for different start points
-# gradient(label='AND', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=-1.0)
-# gradient(label='OR', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=-1.0)
-# gradient(label='XOR', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=-1.0)
-#
-# gradient(label='AND', activation_function='relu', epochs=100, learning_rate=0.001, weight_init=-1.0)
-# gradient(label='OR', activation_function='relu', epochs=100, learning_rate=0.001, weight_init=-1.0)
-# gradient(label='XOR', activation_function='relu', epochs=100, learning_rate=0.001, weight_init=-1.0)
-#
-# gradient(label='AND', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=1.0)
-# gradient(label='OR', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=1.0)
-# gradient(label='XOR', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=1.0)
-#
-# gradient(label='AND', activation_function='relu', epochs=100, learning_rate=0.001, weight_init=1.0)
-# gradient(label='OR', activation_function='relu', epochs=100, learning_rate=0.001, weight_init=1.0)
-# gradient(label='XOR', activation_function='relu', epochs=100, learning_rate=0.001, weight_init=1.0)
-#
-# # Effects of different learning rates
-# gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.0005, weight_init=-1.0)
-# gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.0005, weight_init=-1.0)
-# gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.0005, weight_init=-1.0)
-#
-# gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
-# gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=-1.0)
-# gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.1, weight_init=-1.0)
-# gradient(label='AND', activation_function='relu', epochs=10, learning_rate=0.01, weight_init=-1.0)
-# gradient(label='AND', activation_function='relu', epochs=5, learning_rate=0.01, weight_init=-1.0)
+# Examples from slides
+gradient(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
+gradient(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
+gradient(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
 
-# gradient(label='AND', activation_function='sigmoid', epochs=500, learning_rate=0.1, weight_init=-1.0)
+gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
+gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
+gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
+
+# Different start points / weight initializations
+gradient(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=-1.0)
+gradient(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=-1.0)
+gradient(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=-1.0)
+
+gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
+gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
+gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
+
+gradient(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=1.0)
+gradient(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=1.0)
+gradient(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=1.0)
+
+gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=1.0)
+gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=1.0)
+gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=1.0)
+
+# More epochs necessary for different start points
+gradient(label='AND', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=-1.0)
+gradient(label='OR', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=-1.0)
+gradient(label='XOR', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=-1.0)
+
+gradient(label='AND', activation_function='relu', epochs=100, learning_rate=0.001, weight_init=-1.0)
+gradient(label='OR', activation_function='relu', epochs=100, learning_rate=0.001, weight_init=-1.0)
+gradient(label='XOR', activation_function='relu', epochs=100, learning_rate=0.001, weight_init=-1.0)
+
+gradient(label='AND', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=1.0)
+gradient(label='OR', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=1.0)
+gradient(label='XOR', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=1.0)
+
+gradient(label='AND', activation_function='relu', epochs=100, learning_rate=0.001, weight_init=1.0)
+gradient(label='OR', activation_function='relu', epochs=100, learning_rate=0.001, weight_init=1.0)
+gradient(label='XOR', activation_function='relu', epochs=100, learning_rate=0.001, weight_init=1.0)
+
+# Effects of different learning rates
+gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.0005, weight_init=-1.0)
+gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.0005, weight_init=-1.0)
+gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.0005, weight_init=-1.0)
+
+gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
+gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=-1.0)
+gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.1, weight_init=-1.0)
+gradient(label='AND', activation_function='relu', epochs=10, learning_rate=0.01, weight_init=-1.0)
+gradient(label='AND', activation_function='relu', epochs=5, learning_rate=0.01, weight_init=-1.0)
+
 gradient(label='AND', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=1.0)
 
-# gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
-# gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
-#
-# gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.002, weight_init=-1.0)
-# gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.002, weight_init=-1.0)
-# gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.002, weight_init=-1.0)
-#
-# gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.005, weight_init=-1.0)
-# gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.005, weight_init=-1.0)
-# gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.005, weight_init=-1.0)
+gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
+gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
+
+gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.002, weight_init=-1.0)
+gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.002, weight_init=-1.0)
+gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.002, weight_init=-1.0)
+
+gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.005, weight_init=-1.0)
+gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.005, weight_init=-1.0)
+gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.005, weight_init=-1.0)
