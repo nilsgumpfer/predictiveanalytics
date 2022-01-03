@@ -85,9 +85,9 @@ def main(cmap_name='afmhot', alpha=2.0):
     # Parameters
     last_conv_layer_name = 'conv5_block3_out'
     # img_path = '../data/rooster.jpg'
-    # img_path = '../data/myrooster.jpg'
+    img_path = '../data/myrooster.jpg'
     # img_path = '../data/tower.jpg'
-    img_path = '../data/castle.jpg'
+    # img_path = '../data/castle.jpg'
     # img_path = '../data/castledark.jpg'
     cam_path = '{}_cam.jpg'.format(img_path.rsplit('.', maxsplit=1)[0])
 

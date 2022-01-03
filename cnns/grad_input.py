@@ -79,10 +79,10 @@ def main(cmap_name='afmhot', alpha=4.0):
     model = ResNet152(weights='imagenet')
 
     # Parameters
-    # img_path = '../data/rooster.jpg'
+    img_path = '../data/rooster.jpg'
     # img_path = '../data/myrooster.jpg'
     # img_path = '../data/tower.jpg'
-    img_path = '../data/castle.jpg'
+    # img_path = '../data/castle.jpg'
     # img_path = '../data/castledark.jpg'
     cam_path = '{}_gradxinput.jpg'.format(img_path.rsplit('.', maxsplit=1)[0])
 
