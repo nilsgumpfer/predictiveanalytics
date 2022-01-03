@@ -8,9 +8,13 @@ model_rn50 = ResNet50(weights='imagenet')
 model_rn101 = ResNet101(weights='imagenet')
 model_rn152 = ResNet152(weights='imagenet')
 
-img_path = '../data/elephant.jpg'
+# img_path = '../data/elephant.jpg'
 # img_path = '../data/rooster.jpg'
 # img_path = '../data/myrooster.jpg'
+# img_path = '../data/castlebicycle.jpg'
+# img_path = '../data/castlebicycle_castle.jpg'
+# img_path = '../data/castlebicycle_bike.jpg'
+img_path = '../data/tower.jpg'
 img = image.load_img(img_path, target_size=(224, 224))
 x = image.img_to_array(img)
 x = np.expand_dims(x, axis=0)
