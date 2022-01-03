@@ -12,7 +12,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.applications import ResNet152
-from tensorflow.keras.applications.resnet import preprocess_input, decode_predictions
+from tensorflow.keras.applications.resnet import preprocess_input
 from tensorflow.keras.preprocessing import image
 
 
@@ -84,13 +84,11 @@ def main(cmap_name='afmhot', alpha=2.0):
 
     # Parameters
     last_conv_layer_name = 'conv5_block3_out'
-    # img_path = '../data/elephant.jpg'
-    img_path = '../data/rooster.jpg'
+    # img_path = '../data/rooster.jpg'
     # img_path = '../data/myrooster.jpg'
-    # img_path = '../data/castlebicycle.jpg'
-    # img_path = '../data/castlebicycle_castle.jpg'
-    # img_path = '../data/castlebicycle_bike.jpg'
     # img_path = '../data/tower.jpg'
+    img_path = '../data/castle.jpg'
+    # img_path = '../data/castledark.jpg'
     cam_path = '{}_cam.jpg'.format(img_path.rsplit('.', maxsplit=1)[0])
 
     # Load and preprocess image
@@ -106,8 +104,8 @@ def main(cmap_name='afmhot', alpha=2.0):
     heatmap = make_gradcam_heatmap(x, model, last_conv_layer_name)
 
     # Display heatmap
-    # plt.matshow(heatmap, cmap=cmap_name)
-    # plt.show()
+    plt.matshow(heatmap, cmap=cmap_name)
+    plt.show()
 
     # Create and save superimposed visualization
     save_and_display_gradcam(img_path, heatmap, cam_path, cmap_name, alpha)

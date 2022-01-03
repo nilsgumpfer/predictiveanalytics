@@ -1,19 +1,11 @@
-"""
-Title: Grad-CAM class activation visualization (adapted)
-Author: Nils Gumpfer
-Original Author: [fchollet](https://twitter.com/fchollet)
-Adapted from Deep Learning with Python (2017).
-Source: https://raw.githubusercontent.com/keras-team/keras-io/master/examples/vision/grad_cam.py
-"""
-
 import matplotlib.cm as cm
-import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.applications import ResNet152
-from tensorflow.keras.applications.resnet import preprocess_input, decode_predictions
+from tensorflow.keras.applications.resnet import preprocess_input
 from tensorflow.keras.preprocessing import image
+import matplotlib.pyplot as plt
 
 
 def aggregate_and_normalize_heatmaps_rgb(h):
@@ -27,7 +19,6 @@ def aggregate_and_normalize_heatmaps_rgb(h):
 def normalize_heatmap(h):
     # Normalize to [-1, 1]
     a = h / np.max(np.abs(h))
-
     a = np.nan_to_num(a, nan=0)
 
     return a
@@ -46,13 +37,16 @@ def make_grad_input_heatmap(img_array, model):
     # with regard to each input pixel
     grad = tape.gradient(class_channel, ins)
 
+    # Calculate gradient * input
     h = grad.numpy() * img_array
+
+    # Filter heatmap to contain only positive values
     h[h < 0] = 0
 
     return h
 
 
-def save_and_display_gradcam(img_path, heatmap, cam_path, cmap_name, alpha):
+def save_and_display_grad(img_path, heatmap, cam_path, cmap_name, alpha):
     # Load the original image
     img = keras.preprocessing.image.load_img(img_path)
     img = keras.preprocessing.image.img_to_array(img)
@@ -80,18 +74,16 @@ def save_and_display_gradcam(img_path, heatmap, cam_path, cmap_name, alpha):
     superimposed_img.save(cam_path)
 
 
-def main(cmap_name='afmhot', alpha=2.0):
+def main(cmap_name='afmhot', alpha=4.0):
     # Load model
     model = ResNet152(weights='imagenet')
 
     # Parameters
-    # img_path = '../data/elephant.jpg'
-    img_path = '../data/rooster.jpg'
+    # img_path = '../data/rooster.jpg'
     # img_path = '../data/myrooster.jpg'
-    # img_path = '../data/castlebicycle.jpg'
-    # img_path = '../data/castlebicycle_castle.jpg'
-    # img_path = '../data/castlebicycle_bike.jpg'
     # img_path = '../data/tower.jpg'
+    img_path = '../data/castle.jpg'
+    # img_path = '../data/castledark.jpg'
     cam_path = '{}_gradxinput.jpg'.format(img_path.rsplit('.', maxsplit=1)[0])
 
     # Load and preprocess image
@@ -105,14 +97,16 @@ def main(cmap_name='afmhot', alpha=2.0):
 
     # Calculate gradient
     heatmap = make_grad_input_heatmap(x, model)
+
+    # Aggregate and normalize heatmap
     heatmap_a_n = aggregate_and_normalize_heatmaps_rgb(heatmap)[0]
 
     # Display heatmap
-    # plt.imshow(heatmap_a_n, cmap='afmhot')
-    # plt.show()
+    plt.imshow(heatmap_a_n, cmap=cmap_name)
+    plt.show()
 
     # Create and save superimposed visualization
-    save_and_display_gradcam(img_path, heatmap_a_n, cam_path, cmap_name, alpha)
+    save_and_display_grad(img_path, heatmap_a_n, cam_path, cmap_name, alpha)
 
 
 main()
