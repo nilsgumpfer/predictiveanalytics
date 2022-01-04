@@ -12,11 +12,11 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.applications import ResNet152
-from tensorflow.keras.applications.resnet import preprocess_input
+from tensorflow.keras.applications.resnet import preprocess_input, decode_predictions
 from tensorflow.keras.preprocessing import image
 
 
-def make_gradcam_heatmap(img_array, model, last_conv_layer_name):
+def make_gradcam_heatmap(img_array, model, last_conv_layer_name, idx=None):
     # First, we create a model that maps the input image to the activations
     # of the last conv layer as well as the output predictions
     grad_model = tf.keras.models.Model(
@@ -27,7 +27,10 @@ def make_gradcam_heatmap(img_array, model, last_conv_layer_name):
     # with respect to the activations of the last conv layer
     with tf.GradientTape() as tape:
         last_conv_layer_output, preds = grad_model(img_array)
-        pred_index = tf.argmax(preds[0])
+        if idx is None:
+            pred_index = tf.argmax(preds[0])
+        else:
+            pred_index = idx
         class_channel = preds[:, pred_index]
 
     # This is the gradient of the output neuron (top predicted or chosen)
@@ -78,17 +81,19 @@ def save_and_display_gradcam(img_path, heatmap, cam_path, cmap_name, alpha):
     superimposed_img.save(cam_path)
 
 
-def main(cmap_name='afmhot', alpha=2.0):
+def main(cmap_name='gist_heat', alpha=2.0):
     # Load model
     model = ResNet152(weights='imagenet')
 
     # Parameters
     last_conv_layer_name = 'conv5_block3_out'
-    # img_path = '../data/rooster.jpg'
-    img_path = '../data/myrooster.jpg'
+    img_path = '../data/rooster.jpg'
+    # img_path = '../data/myrooster.jpg'
     # img_path = '../data/tower.jpg'
     # img_path = '../data/castle.jpg'
     # img_path = '../data/castledark.jpg'
+    # img_path = '../data/elephant.jpg'
+    # img_path = '../data/giraffe.jpg'
     cam_path = '{}_cam.jpg'.format(img_path.rsplit('.', maxsplit=1)[0])
 
     # Load and preprocess image
@@ -97,11 +102,18 @@ def main(cmap_name='afmhot', alpha=2.0):
     x = np.expand_dims(x, axis=0)
     x = preprocess_input(x)
 
-    # Remove last layer's softmax activation (we need the raw values!)
+    # Predict on model
+    pred = model.predict(x)
+    d_pred = decode_predictions(pred, top=3)[0]
+    i_pred = pred[0].argsort()[-3:][::-1]
+    for d, i in zip(d_pred, i_pred):
+        print('name={}, probability={:.2f}, idx={}'.format(d[1], d[2], i))
+
+    # Remove last layer's softmax activation (for the explanation we need the raw values!)
     model.layers[-1].activation = None
 
     # Generate class activation heatmap (CAM)
-    heatmap = make_gradcam_heatmap(x, model, last_conv_layer_name)
+    heatmap = make_gradcam_heatmap(x, model, last_conv_layer_name, idx=None)  # TODO: adapt class index to be explained
 
     # Display heatmap
     plt.matshow(heatmap, cmap=cmap_name)

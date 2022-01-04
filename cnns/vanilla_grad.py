@@ -24,7 +24,7 @@ def normalize_heatmap(h):
     return a
 
 
-def make_grad_input_heatmap(img_array, model):
+def make_grad_heatmap(img_array, model):
     ins = tf.convert_to_tensor(img_array)
 
     with tf.GradientTape() as tape:
@@ -37,16 +37,13 @@ def make_grad_input_heatmap(img_array, model):
     # with regard to each input pixel
     grad = tape.gradient(class_channel, ins)
 
-    # Calculate gradient * input
-    h = grad.numpy() * img_array
-
-    # Filter heatmap to contain only positive values
-    h[h < 0] = 0
-
-    return h
+    return grad.numpy()
 
 
 def save_and_display_grad(img_path, heatmap, cam_path, cmap_name, alpha):
+    heatmap = heatmap + 1
+    heatmap = heatmap / 2
+
     # Load the original image
     img = keras.preprocessing.image.load_img(img_path)
     img = keras.preprocessing.image.img_to_array(img)
@@ -74,7 +71,7 @@ def save_and_display_grad(img_path, heatmap, cam_path, cmap_name, alpha):
     superimposed_img.save(cam_path)
 
 
-def main(cmap_name='gist_heat', alpha=4.0):
+def main(cmap_name='seismic', alpha=2.0):
     # Load model
     model = ResNet152(weights='imagenet')
 
@@ -86,7 +83,7 @@ def main(cmap_name='gist_heat', alpha=4.0):
     # img_path = '../data/castledark.jpg'
     # img_path = '../data/elephant.jpg'
     # img_path = '../data/giraffe.jpg'
-    cam_path = '{}_gradxinput.jpg'.format(img_path.rsplit('.', maxsplit=1)[0])
+    cam_path = '{}_vanillagrad.jpg'.format(img_path.rsplit('.', maxsplit=1)[0])
 
     # Load and preprocess image
     img = image.load_img(img_path, target_size=(224, 224))
@@ -98,14 +95,14 @@ def main(cmap_name='gist_heat', alpha=4.0):
     model.layers[-1].activation = None
 
     # Calculate gradient
-    heatmap = make_grad_input_heatmap(x, model)
+    heatmap = make_grad_heatmap(x, model)
 
     # Aggregate and normalize heatmap
     heatmap_a_n = aggregate_and_normalize_heatmaps_rgb(heatmap)[0]
 
     # Display heatmap
-    # plt.imshow(heatmap_a_n, cmap=cmap_name)
-    # plt.show()
+    plt.imshow(heatmap_a_n, cmap=cmap_name, clim=(-1, 1))
+    plt.show()
 
     # Create and save superimposed visualization
     save_and_display_grad(img_path, heatmap_a_n, cam_path, cmap_name, alpha)
