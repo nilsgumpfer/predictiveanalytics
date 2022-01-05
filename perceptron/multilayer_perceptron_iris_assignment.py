@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
 from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler
 
 
 def plot_training_data(X, Y):
@@ -82,7 +83,23 @@ def train():
     np.random.seed(1)
     inputs, labels = load_iris(return_X_y=True)
 
-    # TODO: Implement
+    labels = labels.reshape((-1, 1))
+    inputs = inputs[:100, 0:2]
+    labels = labels[:100]
+
+    inputs = StandardScaler().fit_transform(inputs)
+
+    plot_training_data(inputs, labels)
+
+    mlp = MultiLayerPerceptron(epochs=20, learning_rate=0.1)
+    mlp.train(inputs, labels)
+
+    predictions = []
+
+    for x in inputs:
+        predictions.append(mlp.predict([x])[0][0])
+
+    plot_training_data_and_activations(inputs, labels, predictions)
 
 
 train()
