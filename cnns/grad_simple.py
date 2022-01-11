@@ -13,9 +13,10 @@ from matplotlib import cm
 def plot_function_surface(X, Y, Z):
     fig = plt.figure(figsize=(7, 7))
     ax = fig.add_subplot(projection='3d')
-    facecolors = cm.viridis(Z/np.amax(Z))
+    # facecolors = cm.viridis(Z/np.amax(Z))
     # ax.plot_surface(X, Y, Z, cmap='viridis')
-    ax.plot_surface(X, Y, Z, facecolors=facecolors)
+    # ax.plot_surface(X, Y, Z, facecolors=facecolors)
+    ax.plot_trisurf(np.ravel(X), np.ravel(Y), np.ravel(Z), color=np.ones_like(np.ravel(Z)), cmap='viridis', linewidth=0.1)
     ax.set_xlabel('x')
     ax.set_ylabel('y')
     ax.set_zlabel('z')
@@ -35,8 +36,8 @@ def df_y(x, y):
 
 
 def main():
-    x = np.linspace(-2, 2, 100)
-    y = np.linspace(-5, 5, 100)
+    x = np.linspace(-2, 2, 50)
+    y = np.linspace(-5, 5, 50)
     x, y = np.meshgrid(x, y)
 
     plot_function_surface(x, y, f(x, y))
