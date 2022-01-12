@@ -10,17 +10,17 @@ from sklearn.metrics import mean_squared_error
 from matplotlib import cm
 
 
-def plot_function_surface(X, Y, Z):
-    fig = plt.figure(figsize=(7, 7))
+def plot_function_surface(X, Y, Z, C, t, cmap='gist_earth'):
+    fig = plt.figure(figsize=(18, 12))
     ax = fig.add_subplot(projection='3d')
-    # facecolors = cm.viridis(Z/np.amax(Z))
-    # ax.plot_surface(X, Y, Z, cmap='viridis')
-    # ax.plot_surface(X, Y, Z, facecolors=facecolors)
-    ax.plot_trisurf(np.ravel(X), np.ravel(Y), np.ravel(Z), color=np.ones_like(np.ravel(Z)), cmap='viridis', linewidth=0.1)
+    scamap = plt.cm.ScalarMappable(cmap=cmap)
+    ax.plot_surface(X, Y, Z, facecolors=scamap.to_rgba(C), cmap=cmap)
     ax.set_xlabel('x')
     ax.set_ylabel('y')
     ax.set_zlabel('z')
-    plt.show()
+    ax.set_title(t)
+    fig.colorbar(scamap, shrink=0.5, aspect=10)
+    plt.tight_layout()
 
 
 def f(x, y):
@@ -40,9 +40,18 @@ def main():
     y = np.linspace(-5, 5, 50)
     x, y = np.meshgrid(x, y)
 
-    plot_function_surface(x, y, f(x, y))
-    # plot_function_surface(x, y, df_x(x, y))
-    # plot_function_surface(x, y, df_y(x, y))
+    plot_function_surface(X=x, Y=y, Z=f(x, y), C=f(x, y), t='Z=f(x, y), C=f(x, y)')
+    # plot_function_surface(X=x, Y=y, Z=f(x, y), C=df_x(x, y), t='Z=f(x, y), C=df_x(x, y)')
+    plot_function_surface(X=x, Y=y, Z=f(x, y), C=df_y(x, y), t='Z=f(x, y), C=df_y(x, y)')
+    plt.show()
+    #
+    # plot_function_surface(X=x, Y=y, Z=df_x(x, y), C=f(x, y))
+    # plot_function_surface(X=x, Y=y, Z=df_x(x, y), C=df_x(x, y))
+    # plot_function_surface(X=x, Y=y, Z=df_x(x, y), C=df_y(x, y))
+    #
+    # plot_function_surface(X=x, Y=y, Z=df_y(x, y), C=f(x, y))
+    # plot_function_surface(X=x, Y=y, Z=df_y(x, y), C=df_x(x, y))
+    # plot_function_surface(X=x, Y=y, Z=df_y(x, y), C=df_y(x, y))
 
 
 main()
