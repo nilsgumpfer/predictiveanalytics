@@ -24,15 +24,18 @@ def plot_function_surface(X, Y, Z, C, t, cmap='gist_earth'):
 
 
 def f(x, y):
-    return y * np.sin(x ** 2)
+    # return y * np.sin(x ** 2)
+    return (x**2) * y
 
 
 def df_x(x, y):
-    return 2 * x * y * np.cos(x ** 2)
+    # return 2 * x * y * np.cos(x ** 2)
+    return 2 * x * y
 
 
 def df_y(x, y):
-    return np.sin(x ** 2)
+    # return np.sin(x ** 2)
+    return x ** 2
 
 
 def main():
@@ -41,17 +44,17 @@ def main():
     x, y = np.meshgrid(x, y)
 
     plot_function_surface(X=x, Y=y, Z=f(x, y), C=f(x, y), t='Z=f(x, y), C=f(x, y)')
-    # plot_function_surface(X=x, Y=y, Z=f(x, y), C=df_x(x, y), t='Z=f(x, y), C=df_x(x, y)')
+    plot_function_surface(X=x, Y=y, Z=f(x, y), C=df_x(x, y), t='Z=f(x, y), C=df_x(x, y)')
     plot_function_surface(X=x, Y=y, Z=f(x, y), C=df_y(x, y), t='Z=f(x, y), C=df_y(x, y)')
-    plt.show()
-    #
-    # plot_function_surface(X=x, Y=y, Z=df_x(x, y), C=f(x, y))
-    # plot_function_surface(X=x, Y=y, Z=df_x(x, y), C=df_x(x, y))
-    # plot_function_surface(X=x, Y=y, Z=df_x(x, y), C=df_y(x, y))
-    #
-    # plot_function_surface(X=x, Y=y, Z=df_y(x, y), C=f(x, y))
-    # plot_function_surface(X=x, Y=y, Z=df_y(x, y), C=df_x(x, y))
-    # plot_function_surface(X=x, Y=y, Z=df_y(x, y), C=df_y(x, y))
 
+    # plot_function_surface(X=x, Y=y, Z=df_x(x, y), C=f(x, y), t='Z=df_x(x, y), C=f(x, y)')
+    # plot_function_surface(X=x, Y=y, Z=df_x(x, y), C=df_x(x, y), t='Z=df_x(x, y), C=df_x(x, y)')
+    # plot_function_surface(X=x, Y=y, Z=df_x(x, y), C=df_y(x, y), t='Z=df_x(x, y), C=df_y(x, y)')
+
+    # plot_function_surface(X=x, Y=y, Z=df_y(x, y), C=f(x, y), t='Z=df_y(x, y), C=f(x, y)')
+    # plot_function_surface(X=x, Y=y, Z=df_y(x, y), C=df_x(x, y), t='Z=df_y(x, y), C=df_x(x, y)')
+    # plot_function_surface(X=x, Y=y, Z=df_y(x, y), C=df_y(x, y), t='Z=df_y(x, y), C=df_y(x, y)')
+
+    plt.show()
 
 main()
