@@ -59,10 +59,6 @@ def main():
     # plot_function_surface(x1=x1, x2=x2, Z=df_x1(x1, x2) * x1, C=df_x1(x1, x2) * x1, t='Z=df_x1(x1, x2) * x1, C=df_x1(x1, x2) * x1')
     # plot_function_surface(x1=x1, x2=x2, Z=df_x2(x1, x2) * x2, C=df_x2(x1, x2) * x2, t='Z=df_x2(x1, x2) * x2, C=df_x2(x1, x2) * x2')
 
-    # Gradient plots with gradient * input
-    # plot_function_surface(x1=x1, x2=x2, Z=df_x1(x1, x2), C=df_x1(x1, x2) * x1, t='Z=df_x1(x1, x2), C=df_x1(x1, x2) * x1')
-    # plot_function_surface(x1=x1, x2=x2, Z=df_x2(x1, x2), C=df_x2(x1, x2) * x2, t='Z=df_x2(x1, x2), C=df_x2(x1, x2) * x2')
-
     plt.show()
 
 main()

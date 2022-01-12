@@ -1,3 +1,5 @@
+import os
+
 import matplotlib.cm as cm
 import numpy as np
 import tensorflow as tf
@@ -46,7 +48,7 @@ def make_grad_input_heatmap(img_array, model):
     return h
 
 
-def save_and_display_grad(img_path, heatmap, cam_path, cmap_name, alpha):
+def save_and_display_grad(img_path, heatmap, save_to_path, cmap_name, alpha):
     # Load the original image
     img = keras.preprocessing.image.load_img(img_path)
     img = keras.preprocessing.image.img_to_array(img)
@@ -71,7 +73,7 @@ def save_and_display_grad(img_path, heatmap, cam_path, cmap_name, alpha):
     superimposed_img = keras.preprocessing.image.array_to_img(superimposed_img)
 
     # Save the superimposed image
-    superimposed_img.save(cam_path)
+    superimposed_img.save(save_to_path)
 
 
 def main(cmap_name='gist_heat', alpha=4.0):
@@ -86,7 +88,7 @@ def main(cmap_name='gist_heat', alpha=4.0):
     # img_path = '../data/castledark.jpg'
     # img_path = '../data/elephant.jpg'
     # img_path = '../data/giraffe.jpg'
-    cam_path = '{}_gradxinput.jpg'.format(img_path.rsplit('.', maxsplit=1)[0])
+    save_to_path = '{}_gradxinput.jpg'.format(img_path.rsplit('.', maxsplit=1)[0]).replace('data', 'data/plots')
 
     # Load and preprocess image
     img = image.load_img(img_path, target_size=(224, 224))
@@ -108,7 +110,8 @@ def main(cmap_name='gist_heat', alpha=4.0):
     # plt.show()
 
     # Create and save superimposed visualization
-    save_and_display_grad(img_path, heatmap_a_n, cam_path, cmap_name, alpha)
+    save_and_display_grad(img_path, heatmap_a_n, save_to_path, cmap_name, alpha)
 
 
+os.makedirs('../data/plots', exist_ok=True)
 main()

@@ -5,6 +5,7 @@ Original Author: [fchollet](https://twitter.com/fchollet)
 Adapted from Deep Learning with Python (2017).
 Source: https://raw.githubusercontent.com/keras-team/keras-io/master/examples/vision/grad_cam.py
 """
+import os
 
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
@@ -94,7 +95,7 @@ def main(cmap_name='gist_heat', alpha=2.0):
     # img_path = '../data/castledark.jpg'
     # img_path = '../data/elephant.jpg'
     # img_path = '../data/giraffe.jpg'
-    cam_path = '{}_cam.jpg'.format(img_path.rsplit('.', maxsplit=1)[0])
+    cam_path = '{}_cam.jpg'.format(img_path.rsplit('.', maxsplit=1)[0]).replace('data', 'data/plots')
 
     # Load and preprocess image
     img = image.load_img(img_path, target_size=(224, 224))
@@ -123,4 +124,5 @@ def main(cmap_name='gist_heat', alpha=2.0):
     save_and_display_gradcam(img_path, heatmap, cam_path, cmap_name, alpha)
 
 
+os.makedirs('../data/plots', exist_ok=True)
 main()
