@@ -21,16 +21,19 @@ def plot_function_surface(x1, x2, Z, C, t, cmap='gist_earth'):
 
 
 def f(x1, x2):
+    # return -10 * x1 + 0 * x2 + 100
     return x2 * np.sin(x1 ** 2)
     # return (x1**2) * x2
 
 
 def df_x1(x1, x2):
+    # return np.ones_like(x1) * -10
     return 2 * x1 * x2 * np.cos(x1 ** 2)
     # return 2 * x1 * x2
 
 
 def df_x2(x1, x2):
+    # return np.zeros_like(x2)
     return np.sin(x1 ** 2)
     # return x1 ** 2
 
@@ -41,7 +44,7 @@ def main():
     x1, x2 = np.meshgrid(x1, x2)
 
     # Function plot
-    plot_function_surface(x1=x1, x2=x2, Z=f(x1, x2), C=f(x1, x2), t='Z=f(x1, x2), C=f(x1, x2)')
+    # plot_function_surface(x1=x1, x2=x2, Z=f(x1, x2), C=f(x1, x2), t='Z=f(x1, x2), C=f(x1, x2)')
 
     # Function plots with x1 and x2 gradients
     # plot_function_surface(x1=x1, x2=x2, Z=f(x1, x2), C=df_x1(x1, x2), t='Z=f(x1, x2), C=df_x1(x1, x2)')
@@ -52,7 +55,7 @@ def main():
     # plot_function_surface(x1=x1, x2=x2, Z=f(x1, x2), C=df_x2(x1, x2) * x2, t='Z=f(x1, x2), C=df_x2(x1, x2) * x2')
 
     # Gradient plots
-    # plot_function_surface(x1=x1, x2=x2, Z=df_x1(x1, x2), C=df_x1(x1, x2), t='Z=df_x1(x1, x2), C=df_x1(x1, x2)')
+    plot_function_surface(x1=x1, x2=x2, Z=df_x1(x1, x2), C=df_x1(x1, x2), t='Z=df_x1(x1, x2), C=df_x1(x1, x2)')
     # plot_function_surface(x1=x1, x2=x2, Z=df_x2(x1, x2), C=df_x2(x1, x2), t='Z=df_x2(x1, x2), C=df_x2(x1, x2)')
 
     # Gradient * input plots

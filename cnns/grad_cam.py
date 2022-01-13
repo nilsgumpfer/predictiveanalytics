@@ -32,6 +32,9 @@ def make_gradcam_heatmap(img_array, model, last_conv_layer_name, idx=None):
             pred_index = tf.argmax(preds[0])
         else:
             pred_index = idx
+
+        print('Explaining idx={}'.format(pred_index))
+
         class_channel = preds[:, pred_index]
 
     # This is the gradient of the output neuron (top predicted or chosen)
@@ -85,11 +88,12 @@ def save_and_display_gradcam(img_path, heatmap, cam_path, cmap_name, alpha):
 def main(cmap_name='gist_heat', alpha=2.0):
     # Load model
     model = ResNet152(weights='imagenet')
+    model.summary()
 
     # Parameters
     last_conv_layer_name = 'conv5_block3_out'
-    img_path = '../data/rooster.jpg'
-    # img_path = '../data/myrooster.jpg'
+    # img_path = '../data/rooster.jpg'
+    img_path = '../data/myrooster.jpg'
     # img_path = '../data/tower.jpg'
     # img_path = '../data/castle.jpg'
     # img_path = '../data/castledark.jpg'
@@ -117,8 +121,8 @@ def main(cmap_name='gist_heat', alpha=2.0):
     heatmap = make_gradcam_heatmap(x, model, last_conv_layer_name, idx=None)  # TODO: adapt class index to be explained
 
     # Display heatmap
-    plt.matshow(heatmap, cmap=cmap_name)
-    plt.show()
+    # plt.matshow(heatmap, cmap=cmap_name)
+    # plt.show()
 
     # Create and save superimposed visualization
     save_and_display_gradcam(img_path, heatmap, cam_path, cmap_name, alpha)
