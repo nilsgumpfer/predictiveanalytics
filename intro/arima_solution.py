@@ -13,7 +13,7 @@ plt.plot(values, label='Passengers')
 
 # Initialize models
 model_1 = ARIMA(values, order=(2, 2, 2), seasonal_order=(1, 1, 1, 12))
-model_2 = ARIMA(values, order=(2, 2, 2), seasonal_order=(0, 1, 0, 12))
+model_2 = ARIMA(values, order=(2, 2, 2), seasonal_order=(0, 1, 0, 2))
 
 # Train models
 results_1 = model_1.fit()
