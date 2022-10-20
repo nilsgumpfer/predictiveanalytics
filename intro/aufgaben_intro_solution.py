@@ -31,7 +31,7 @@ df = df.sort_values('col1', ascending=False)
 print(df)
 
 # 7) Speichern Sie den Dataframe als CSV ab
-df.to_csv('data/mydf.csv')
+df.to_csv('../data/mydf.csv')
 
 # 8) Erstellen Sie einen Linien-Plot in Matplotlib mit drei Werte-Linien und einer Legende
 plt.plot(x4, label='x4')
@@ -65,4 +65,4 @@ plt.legend()
 plt.title('MyTitle')
 plt.xlabel('xlabel')
 plt.ylabel('ylabel')
-plt.savefig('data/myplot.pdf')
+plt.savefig('../data/myplot.pdf')
