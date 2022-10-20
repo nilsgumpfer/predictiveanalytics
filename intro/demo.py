@@ -29,11 +29,9 @@ def run_mydict():
     # print(d.keys())
     # print(d.values())
 
-    for k, v, g in zip(d.keys(), d.values()):
+    for k, v in zip(d.keys(), d.values()):
         print(k, v)
 
 
 # run()
-# loops(['4', 4, 5, 6.7])
-# run_mydict()
-loops()
+run_mydict()
