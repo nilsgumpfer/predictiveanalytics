@@ -140,7 +140,7 @@ class Perceptron(object):
 
 def train(label, activation_function, epochs, learning_rate, weight_init, bias=True):
     np.random.seed(1)
-    validation_inputs = [np.array([1, 1]), np.array([1, 0]), np.array([0, 1]), np.array([0, 0])]
+    validation_inputs = [np.array([1, 1]), np.array([1, 0.01]), np.array([0.01, 1]), np.array([0.01, 0.01])]
     training_inputs, labels = generate_data(100, label)
 
     # plot_training_data(training_inputs, labels)
@@ -213,10 +213,9 @@ def gradient(label, activation_function, epochs, learning_rate, weight_init, bia
 
 # Examples from slides
 # train(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
-# train(label='AND', activation_function='binary', epochs=3, learning_rate=0.001, weight_init=0.0)
 # train(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
 # train(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
-#
+
 # train(label='AND', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
 # train(label='AND', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=0.0)
 # train(label='AND', activation_function='sigmoid', epochs=10, learning_rate=0.1, weight_init=0.0)
@@ -226,31 +225,31 @@ def gradient(label, activation_function, epochs, learning_rate, weight_init, bia
 
 # train(label='OR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
 # train(label='XOR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
-#
+
 # gradient(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
 # gradient(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
 # gradient(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
-#
+
 # gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0, bias_init=0.19)
 # gradient(label='AND', activation_function='relu', epochs=500, learning_rate=0.001, weight_init=0.0, bias_init=-0.66)
 # gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
-gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
-#
+# gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
+
 # gradient(label='AND', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
 # gradient(label='OR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
 # gradient(label='XOR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
-#
+
 # # Different activations sometimes require different number of epochs or learning rate
 # train(label='AND', activation_function='relu', epochs=500, learning_rate=0.001, weight_init=0.0)
 # train(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0, bias=True)
 # train(label='AND', activation_function='relu', epochs=500, learning_rate=0.001, weight_init=0.0, bias=True)
 # train(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
 # train(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
-#
+
 # train(label='AND', activation_function='relu', epochs=500, learning_rate=0.001, weight_init=0.0)
 # train(label='OR', activation_function='relu', epochs=500, learning_rate=0.001, weight_init=0.0)
 # train(label='XOR', activation_function='relu', epochs=500, learning_rate=0.001, weight_init=0.0)
-#
+
 # train(label='AND', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=0.0)
 # train(label='OR', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=0.0)
 # train(label='XOR', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=0.0)
