@@ -4,27 +4,6 @@ from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
 from sklearn.datasets import load_iris
 from sklearn.preprocessing import StandardScaler
 
-
-def plot_training_data(X, Y):
-    plt.scatter(x=X[:, 0], y=X[:, 1], c=Y, cmap='bwr')
-    plt.xlabel('sepal length (cm)')
-    plt.ylabel('sepal width (cm)')
-    plt.show()
-
-
-def plot_training_data_and_activations(X, Y, activations):
-    fig = plt.figure(figsize=(7, 7))
-    ax = fig.add_subplot(projection='3d')
-    ax.scatter(xs=X[:, 0], ys=X[:, 1], zs=activations, c=Y, cmap='bwr')
-    ax.set_xlabel('sepal length (cm)')
-    ax.set_ylabel('sepal width (cm)')
-    ax.set_zticks([0, 0.5, 1])
-    ax.set_zlim([0, 1])
-    ax.set_zlabel('Activation')
-    plt.tight_layout()
-    plt.show()
-
-
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
