@@ -9,6 +9,32 @@ from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
 from sklearn.metrics import mean_squared_error
 
 
+def plot_training_data_and_activations(epoch, X, Y, e, activations, azim=-39, elev=8, save_to=None):
+    fig = plt.figure(figsize=(7, 7))
+    ax = fig.add_subplot(projection='3d')
+    ax.scatter(xs=X[:, 0], ys=X[:, 1], zs=activations, c=Y, cmap='bwr')
+    ax.set_xticks([0, 0.5, 1])
+    ax.set_xlim([0, 1])
+    ax.set_xlabel('x1')
+    ax.set_yticks([0, 0.5, 1])
+    ax.set_ylim([0, 1])
+    ax.set_ylabel('x2')
+    ax.set_zticks([0, 0.5, 1])
+    ax.set_zlim([0, 1])
+    ax.set_zlabel('Activation')
+
+    ax.view_init(azim=azim, elev=elev)
+    ax.set_title('Epoch {}, Error: {:.3f}'.format(epoch, e))
+
+    if save_to is None:
+        plt.show()
+    else:
+        plt.savefig(save_to)
+
+    plt.close()
+
+    return save_to
+
 def plot_error_gradient(epoch, W1, W2, E, w1, w2, e, azim=99, elev=22, save_to=None):
     fig = plt.figure(figsize=(7, 7))
     ax = fig.add_subplot(projection='3d')
@@ -30,6 +56,8 @@ def plot_error_gradient(epoch, W1, W2, E, w1, w2, e, azim=99, elev=22, save_to=N
         plt.savefig(save_to)
 
     plt.close()
+
+    return save_to
 
 
 def generate_data(n, label):
@@ -59,8 +87,8 @@ def generate_data(n, label):
 
 
 class Perceptron2(object):
-    def __init__(self, no_of_inputs=2, epochs=200, learning_rate=0.01, activation_function='binary', bias=True,
-                 weight_init=0.0):
+    def __init__(self, no_of_inputs=2, epochs=200, learning_rate=0.01, activation_function='binary', bias=True, weight_init=0.0):
+        self.history_predictions = []
         self.epochs = epochs
         self.no_of_inputs = no_of_inputs
         self.learning_rate = learning_rate
@@ -90,9 +118,12 @@ class Perceptron2(object):
 
                 if e > 0:
                     self.weights[1:] += self.learning_rate * d_error * inputs
-                    self.weights[0] += self.learning_rate * d_error * 1
+                    # self.weights[0] += self.learning_rate * d_error * 1
+                    if self.bias:
+                        self.weights[0] += self.learning_rate * d_error * 1
 
             self.history_error[e] = mean_squared_error(labels, predictions)
+            self.history_predictions.append(predictions)
 
             for i in range(self.no_of_inputs):
                 self.history_weights[i][e] = self.weights[i + 1]
@@ -138,21 +169,20 @@ class Perceptron2(object):
             return 1 / (1 + math.e ** -output)
 
 
-def generate_gif_from_plots(paths, params):
+def generate_gif_from_plots(prefix, paths, params):
     images = []
 
     for filename in paths:
         images.append(imageio.imread(filename))
 
-    imageio.mimsave('plots/gradientdescent_{}.gif'.format(params), images)
+    imageio.mimsave('plots/{}_{}.gif'.format(prefix, params), images)
 
 
-def gradient(label, activation_function, epochs, learning_rate, weight_init):
+def gradient(label, activation_function, epochs, learning_rate, weight_init, bias=False):
     np.random.seed(1)
     training_inputs, labels = generate_data(100, label)
 
-    perceptron = Perceptron2(activation_function=activation_function, bias=False, no_of_inputs=2, epochs=epochs,
-                             learning_rate=learning_rate)
+    perceptron = Perceptron2(activation_function=activation_function, bias=bias, no_of_inputs=2, epochs=epochs, learning_rate=learning_rate)
 
     weights1 = []
     weights2 = []
@@ -163,25 +193,23 @@ def gradient(label, activation_function, epochs, learning_rate, weight_init):
             perceptron.weights[1] = w1
             perceptron.weights[2] = w2
 
-            predictions = []
+            predictions_tmp = []
 
             for x, y in zip(training_inputs, labels):
-                predictions.append(perceptron.predict(x))
+                predictions_tmp.append(perceptron.predict(x))
 
-            e = mean_squared_error(labels, predictions)
+            e = mean_squared_error(labels, predictions_tmp)
 
             weights1.append(w1)
             weights2.append(w2)
             errors.append(e)
 
+    if bias:
+        perceptron.weights[0] = weight_init
+
     perceptron.weights[1] = weight_init
     perceptron.weights[2] = weight_init
     perceptron.train(training_inputs, labels)
-
-    predictions = []
-
-    for x, y in zip(training_inputs, labels):
-        predictions.append(perceptron.predict(x))
 
     # Azimuth and elevation specifiy camera perspective. To generate a cinematic camera swing around the plot,
     # we change azimuth and elevation in each plot. For this, n=epochs values are generated for each parameter.
@@ -189,86 +217,59 @@ def gradient(label, activation_function, epochs, learning_rate, weight_init):
     azims = np.arange(start=100, stop=150, step=50 / epochs)
     elevs = np.arange(start=20, stop=0, step=-20 / epochs)
 
-    paths = []
+    paths_graddesc = []
+    paths_activ = []
 
     os.makedirs('plots/frames/', exist_ok=True)
 
-    params = '{}_{}_{}_{}_{}'.format(label, activation_function, epochs, str(learning_rate).replace('.', '-'),
-                                     weight_init)
+    params = '{}_{}_{}_{}_{}{}'.format(label, activation_function, epochs, str(learning_rate).replace('.', '-'), weight_init, {True: '_bias', False: ''}[bias])
 
-    for epoch, w1, w2, e, azim, elev in zip(range(epochs + 1), perceptron.history_weights[0],
-                                            perceptron.history_weights[1], perceptron.history_error, azims, elevs):
-        path = 'plots/frames/gradientdescent_{}_{}.png'.format(params, epoch)
-        paths.append(path)
-        plot_error_gradient(epoch, weights1, weights2, errors, w1=w1, w2=w2, e=e, azim=azim, elev=elev, save_to=path)
+    for epoch, w1, w2, e, p, azim, elev in zip(range(epochs + 1), perceptron.history_weights[0], perceptron.history_weights[1], perceptron.history_error, perceptron.history_predictions, azims, elevs):
+        if not bias:
+            # Only plot error gradient if no bias was used
+            paths_graddesc.append(plot_error_gradient(epoch, weights1, weights2, errors, w1=w1, w2=w2, e=e, azim=azim, elev=elev, save_to='plots/frames/gradientdescent_{}_{}.png'.format(params, epoch)))
+        else:
+            paths_activ.append(plot_training_data_and_activations(epoch, training_inputs, labels, e, p, save_to='plots/frames/activations_{}_{}.png'.format(params, epoch)))
 
-    # Based on the generated plots, a GIF image is generated
-    generate_gif_from_plots(paths, params)
+    # Based on the generated plots, GIF images are generated
+    if not bias:
+        # Only plot error gradient if no bias was used
+        generate_gif_from_plots('gradientdescent', paths_graddesc, params)
+    else:
+        generate_gif_from_plots('activations', paths_activ, params)
 
+# Animated activations, Slides 52-62
+gradient(label='AND', activation_function='sigmoid', epochs=200, learning_rate=0.1, weight_init=0.0, bias=True)
+gradient(label='OR', activation_function='sigmoid', epochs=200, learning_rate=0.1, weight_init=0.0, bias=True)
+gradient(label='XOR', activation_function='sigmoid', epochs=200, learning_rate=0.1, weight_init=0.0, bias=True)
 
-# Examples from slides
-gradient(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
-gradient(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
-gradient(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
-
+# Animated error gradients, Slides 65-73
+# gradient(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
+# gradient(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
+# gradient(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
+# gradient(label='AND', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
+# gradient(label='OR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
+# gradient(label='XOR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
 gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
-gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
-gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
+# gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
+# gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
 
-# Different start points / weight initializations
-gradient(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=-1.0)
-gradient(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=-1.0)
-gradient(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=-1.0)
-
+# Animated error gradients with different start points -> analyze path, variate epochs and learning rate
+# gradient(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=-1.0)
+# gradient(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=-1.0)
+# gradient(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=-1.0)
+# gradient(label='AND', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=-1.0)
+# gradient(label='OR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=-1.0)
+# gradient(label='XOR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=-1.0)
 gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
-gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
-gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
-
-gradient(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=1.0)
-gradient(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=1.0)
-gradient(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=1.0)
-
+# gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
+# gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
+# gradient(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=1.0)
+# gradient(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=1.0)
+# gradient(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=1.0)
+# gradient(label='AND', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=1.0)
+# gradient(label='OR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=1.0)
+# gradient(label='XOR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=1.0)
 gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=1.0)
-gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=1.0)
-gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=1.0)
-
-# More epochs necessary for different start points
-gradient(label='AND', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=-1.0)
-gradient(label='OR', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=-1.0)
-gradient(label='XOR', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=-1.0)
-
-gradient(label='AND', activation_function='relu', epochs=100, learning_rate=0.001, weight_init=-1.0)
-gradient(label='OR', activation_function='relu', epochs=100, learning_rate=0.001, weight_init=-1.0)
-gradient(label='XOR', activation_function='relu', epochs=100, learning_rate=0.001, weight_init=-1.0)
-
-gradient(label='AND', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=1.0)
-gradient(label='OR', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=1.0)
-gradient(label='XOR', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=1.0)
-
-gradient(label='AND', activation_function='relu', epochs=100, learning_rate=0.001, weight_init=1.0)
-gradient(label='OR', activation_function='relu', epochs=100, learning_rate=0.001, weight_init=1.0)
-gradient(label='XOR', activation_function='relu', epochs=100, learning_rate=0.001, weight_init=1.0)
-
-# Effects of different learning rates
-gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.0005, weight_init=-1.0)
-gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.0005, weight_init=-1.0)
-gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.0005, weight_init=-1.0)
-
-gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
-gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=-1.0)
-gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.1, weight_init=-1.0)
-gradient(label='AND', activation_function='relu', epochs=10, learning_rate=0.01, weight_init=-1.0)
-gradient(label='AND', activation_function='relu', epochs=5, learning_rate=0.01, weight_init=-1.0)
-
-gradient(label='AND', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=1.0)
-
-gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
-gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
-
-gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.002, weight_init=-1.0)
-gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.002, weight_init=-1.0)
-gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.002, weight_init=-1.0)
-
-gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.005, weight_init=-1.0)
-gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.005, weight_init=-1.0)
-gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.005, weight_init=-1.0)
+# gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=1.0)
+# gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=1.0)

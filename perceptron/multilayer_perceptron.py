@@ -128,7 +128,7 @@ def train(label, epochs, learning_rate):
     plot_training_data_and_activations(training_inputs, labels, predictions)
 
 
-# Examples from slides
+# Static activations, Slides 81-89
 train(label='XOR', epochs=1000, learning_rate=0.2)
 # train(label='AND', epochs=1000, learning_rate=0.2)
 # train(label='OR', epochs=1000, learning_rate=0.2)

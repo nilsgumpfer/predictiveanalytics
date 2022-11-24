@@ -83,9 +83,69 @@ def train():
     np.random.seed(1)
     inputs, labels = load_iris(return_X_y=True)
 
-    print(np.shape(inputs), np.shape(labels))
+    labels = labels.reshape((-1, 1))  # Wrap single-value labels into vector
+    inputs = inputs[:100, 0:2]  # Select records of first two classes, of each, select two first features
+    labels = labels[:100]  # Select first two classes
 
-    # TODO: implement
+    inputs_std_scaled = StandardScaler().fit_transform(inputs)
+    inputs_shifted = inputs - 4.5
+
+    fig, axs = plt.subplots(ncols=2, nrows=3, figsize=(15, 10))
+    axs[0][0].set_title('Raw input values (scatter)')
+    axs[0][0].scatter(y=np.ravel(inputs), x=np.arange(start=0, stop=200))
+    axs[0][1].set_title('Raw input values (box-plot)')
+    axs[0][1].boxplot(np.ravel(inputs))
+    axs[1][0].set_title('Shifted input values (scatter)')
+    axs[1][0].scatter(y=np.ravel(inputs_shifted), x=np.arange(start=0, stop=200))
+    axs[1][1].set_title('Shifted input values (box-plot)')
+    axs[1][1].boxplot(np.ravel(inputs_shifted))
+    axs[2][0].set_title('Std-scaled input values (scatter)')
+    axs[2][0].scatter(y=np.ravel(inputs_std_scaled), x=np.arange(start=0, stop=200))
+    axs[2][1].set_title('Std-scaled input values (box-plot)')
+    axs[2][1].boxplot(np.ravel(inputs_std_scaled))
+    plt.tight_layout()
+    plt.show()
+    plt.close()
+
+    # Define which input variant to use
+    inputs_preprocessed = inputs_std_scaled
+
+    # Explanation why scaling/shifting/raw values are a good/bad idea
+    # Training finally yields usable results, but it may take much less time if the training data is scaled and centered in a "good" way. The longer training can be caused by higher weight values to be learned / adapted during training. It takes much less time to produce low weights, high weight values require much more time to develop.
+    #
+    # std scaled, 20 epochs, working correctly
+    # [[ 1.43618143  1.94041117]
+    #  [-1.2114966  -1.47613612]]
+    #
+    # shifted, 20 epochs, failing
+    # [[ 0.70162075  1.39422232]
+    #  [-0.1321098   0.04623839]]
+    #
+    # shifted, 60 epochs, working correctly
+    # [[ 1.11354323  1.9798659 ]
+    #  [-0.54489349 -1.51883082]]
+    #
+    # raw, 20 epochs, failing
+    # [[ 0.32962256  0.71427478]
+    #  [-0.10781781  0.29985366]]
+    #
+    # raw, 350 epochs, working correctly
+    # [[  6.09656861   0.5607521 ]
+    #  [-10.22994957   0.41524752]]
+
+    plot_training_data(inputs_preprocessed, labels)
+
+    mlp = MultiLayerPerceptron(epochs=20, learning_rate=0.1)
+    mlp.train(inputs_preprocessed, labels)
+
+    print(mlp.hidden_weights, mlp.output_weights)
+
+    predictions = []
+
+    for x in inputs_preprocessed:
+        predictions.append(mlp.predict([x])[0][0])
+
+    plot_training_data_and_activations(inputs_preprocessed, labels, predictions)
 
 
 train()
