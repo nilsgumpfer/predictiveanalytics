@@ -238,6 +238,7 @@ def gradient(label, activation_function, epochs, learning_rate, weight_init, bia
     else:
         generate_gif_from_plots('activations', paths_activ, params)
 
+
 # Animated activations, Slides 52-62
 gradient(label='AND', activation_function='sigmoid', epochs=200, learning_rate=0.1, weight_init=0.0, bias=True)
 gradient(label='OR', activation_function='sigmoid', epochs=200, learning_rate=0.1, weight_init=0.0, bias=True)
@@ -262,6 +263,7 @@ gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001,
 # gradient(label='OR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=-1.0)
 # gradient(label='XOR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=-1.0)
 gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
+gradient(label='AND', activation_function='relu', epochs=100, learning_rate=0.001, weight_init=-1.0)
 gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
 # gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
 # gradient(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=1.0)
