@@ -241,6 +241,7 @@ def gradient(label, activation_function, epochs, learning_rate, weight_init, bia
 
 # Animated activations, Slides 52-62
 gradient(label='AND', activation_function='sigmoid', epochs=200, learning_rate=0.1, weight_init=0.0, bias=True)
+# exit()
 gradient(label='OR', activation_function='sigmoid', epochs=200, learning_rate=0.1, weight_init=0.0, bias=True)
 gradient(label='XOR', activation_function='sigmoid', epochs=200, learning_rate=0.1, weight_init=0.0, bias=True)
 

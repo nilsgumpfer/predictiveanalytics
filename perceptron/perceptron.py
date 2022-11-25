@@ -214,7 +214,7 @@ def gradient(label, activation_function, epochs, learning_rate, weight_init, bia
 
 
 # Static activations, Slides 52-62
-# train(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
+train(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
 # train(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
 # train(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
 # train(label='AND', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
