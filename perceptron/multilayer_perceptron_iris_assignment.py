@@ -59,12 +59,15 @@ class MultiLayerPerceptron:
 
 
 def train():
+    # Set random seed for reproducibility
     np.random.seed(1)
-    inputs, labels = load_iris(return_X_y=True)
 
-    print(np.shape(inputs), np.shape(labels))
+    # Load iris dataset
+    iris = load_iris()
+    inputs = iris['data']
+    labels = iris['target']
 
-    # TODO: implement
+    # TODO: implement preprocessing and training
 
 
 train()
