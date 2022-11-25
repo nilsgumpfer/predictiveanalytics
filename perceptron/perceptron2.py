@@ -214,8 +214,8 @@ def gradient(label, activation_function, epochs, learning_rate, weight_init, bia
     # Azimuth and elevation specifiy camera perspective. To generate a cinematic camera swing around the plot,
     # we change azimuth and elevation in each plot. For this, n=epochs values are generated for each parameter.
     # To adapt the start and endpoints, simply adapt start and stop values below.
-    azims = np.arange(start=100, stop=150, step=50 / epochs)
-    elevs = np.arange(start=20, stop=0, step=-20 / epochs)
+    azims = np.linspace(start=90, stop=180, num=epochs)
+    elevs = np.linspace(start=10, stop=50, num=epochs)
 
     paths_graddesc = []
     paths_activ = []
@@ -251,7 +251,7 @@ gradient(label='XOR', activation_function='sigmoid', epochs=200, learning_rate=0
 # gradient(label='OR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
 # gradient(label='XOR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
 gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
-# gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
+gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
 # gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
 
 # Animated error gradients with different start points -> analyze path, variate epochs and learning rate
@@ -262,7 +262,7 @@ gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.001
 # gradient(label='OR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=-1.0)
 # gradient(label='XOR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=-1.0)
 gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
-# gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
+gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
 # gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=-1.0)
 # gradient(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=1.0)
 # gradient(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=1.0)
@@ -271,5 +271,5 @@ gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.001
 # gradient(label='OR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=1.0)
 # gradient(label='XOR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=1.0)
 gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=1.0)
-# gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=1.0)
+gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=1.0)
 # gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=1.0)

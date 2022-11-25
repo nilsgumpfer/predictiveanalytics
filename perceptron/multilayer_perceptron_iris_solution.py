@@ -109,19 +109,19 @@ def train(epochs=20, learning_rate=0.1, preprocessing=None):
     labels = labels[:100]
 
     # Preprocess inputs
-    inputs_std_scaled = StandardScaler().fit_transform(inputs)
+    inputs_scaled = StandardScaler().fit_transform(inputs)
     inputs_shifted = np.zeros_like(inputs)
     inputs_shifted[..., 0] = inputs[..., 0] - np.min(inputs[..., 0])
     inputs_shifted[..., 1] = inputs[..., 1] - np.min(inputs[..., 1])
 
     # Plot input variants
-    plot_input_variants(inputs, inputs_shifted, inputs_std_scaled)
+    plot_input_variants(inputs, inputs_shifted, inputs_scaled)
 
     # Select input variant to be used
     if preprocessing == 'shift':
         inputs_preprocessed = inputs_shifted
     elif preprocessing == 'scale':
-        inputs_preprocessed = inputs_std_scaled
+        inputs_preprocessed = inputs_scaled
     else:
         inputs_preprocessed = inputs
 
@@ -138,8 +138,13 @@ def train(epochs=20, learning_rate=0.1, preprocessing=None):
     plot_training_data_and_activations(inputs, labels, predictions)
 
 
-# train(epochs=20, learning_rate=0.1)
-# train(epochs=170, learning_rate=0.05)
-train(epochs=20, learning_rate=0.1, preprocessing='scale')
+# First trials, 20 epochs
+train(epochs=20, learning_rate=0.1)
+# train(epochs=20, learning_rate=0.1, preprocessing='scale')
 # train(epochs=20, learning_rate=0.1, preprocessing='shift')
+
+# Further trials, more epochs
+# train(epochs=100, learning_rate=0.05)
+# train(epochs=200, learning_rate=0.05)
+# train(epochs=100, learning_rate=0.1, preprocessing='scale')
 # train(epochs=100, learning_rate=0.1, preprocessing='shift')
