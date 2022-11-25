@@ -9,6 +9,8 @@ from sklearn.metrics import mean_squared_error
 
 def plot_training_data(X, Y):
     plt.scatter(x=X[:, 0], y=X[:, 1], c=Y, cmap='bwr')
+    plt.axhline(y=0.5, color='grey', linestyle='--')
+    plt.axvline(x=0.5, color='grey', linestyle='--')
     plt.show()
 
 
@@ -143,7 +145,7 @@ def train(label, activation_function, epochs, learning_rate, weight_init, bias=T
     validation_inputs = [np.array([1, 1]), np.array([1, 0.01]), np.array([0.01, 1]), np.array([0.01, 0.01])]
     training_inputs, labels = generate_data(100, label)
 
-    # plot_training_data(training_inputs, labels)
+    plot_training_data(training_inputs, labels)
 
     perceptron = Perceptron(activation_function=activation_function, epochs=epochs, learning_rate=learning_rate, bias=bias, weight_init=weight_init)
     perceptron.train(training_inputs, labels)
@@ -212,7 +214,7 @@ def gradient(label, activation_function, epochs, learning_rate, weight_init, bia
 
 
 # Static activations, Slides 52-62
-train(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
+# train(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
 # train(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
 # train(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
 # train(label='AND', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)

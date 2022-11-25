@@ -18,6 +18,22 @@ def plot_training_data_and_activations(X, Y, activations):
     plt.show()
 
 
+def plot_input_variants(inputs, inputs_shifted, inputs_scaled):
+    fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(10, 10))
+    ax.set_title('Input value variants')
+    ax.scatter(x=inputs[..., 0], y=inputs[..., 1], label='raw', s=10)
+    ax.scatter(x=inputs_shifted[..., 0], y=inputs_shifted[..., 1], label='shifted', s=10)
+    ax.scatter(x=inputs_scaled[..., 0], y=inputs_scaled[..., 1], label='scaled', s=10)
+    ax.axhline(y=0, color='grey', linestyle='--')
+    ax.axvline(x=0, color='grey', linestyle='--')
+    ax.set_xlim((-3, 8))
+    ax.set_ylim((-3, 8))
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+    plt.close()
+
+
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
@@ -70,22 +86,6 @@ class MultiLayerPerceptron:
             self.output_bias += np.sum(d_predicted_output, axis=0, keepdims=True) * self.lr
             self.hidden_weights += inputs.T.dot(d_hidden_layer) * self.lr
             self.hidden_bias += np.sum(d_hidden_layer, axis=0, keepdims=True) * self.lr
-
-
-def plot_input_variants(inputs, inputs_shifted, inputs_scaled):
-    fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(10, 10))
-    ax.set_title('Input value variants')
-    ax.scatter(x=inputs[..., 0], y=inputs[..., 1], label='raw', s=10)
-    ax.scatter(x=inputs_shifted[..., 0], y=inputs_shifted[..., 1], label='shifted', s=10)
-    ax.scatter(x=inputs_scaled[..., 0], y=inputs_scaled[..., 1], label='scaled', s=10)
-    ax.axhline(y=0, color='grey', linestyle='--')
-    ax.axvline(x=0, color='grey', linestyle='--')
-    ax.set_xlim((-3, 8))
-    ax.set_ylim((-3, 8))
-    plt.legend()
-    plt.tight_layout()
-    plt.show()
-    plt.close()
 
 
 def train(epochs=20, learning_rate=0.1, preprocessing=None):
