@@ -115,7 +115,8 @@ def train(epochs=20, learning_rate=0.1, preprocessing=None):
     inputs_shifted[..., 1] = inputs[..., 1] - np.min(inputs[..., 1])
 
     # Plot input variants
-    plot_input_variants(inputs, inputs_shifted, inputs_scaled)
+    if preprocessing is not None:
+        plot_input_variants(inputs, inputs_shifted, inputs_scaled)
 
     # Select input variant to be used
     if preprocessing == 'shift':
