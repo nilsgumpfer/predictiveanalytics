@@ -1,5 +1,6 @@
 numpy~=1.19.5
 tensorflow~=2.6.2
+tensorboard~=2.6.0
 matplotlib~=3.3.4
 keras~=2.6.0
 pandas~=1.1.5

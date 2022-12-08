@@ -12,8 +12,8 @@ from tensorflow.python.keras.utils.vis_utils import plot_model
 
 
 # Load train and test data
-((train_images, train_labels), (test_images, test_labels)), ds_name = mnist.load_data(), 'digits'
-# ((train_images, train_labels), (test_images, test_labels)), ds_name = fashion_mnist.load_data(), 'fashion'
+((train_images, train_labels), (val_images, val_labels)), ds_name = mnist.load_data(), 'digits'
+# ((train_images, train_labels), (val_images, val_labels)), ds_name = fashion_mnist.load_data(), 'fashion'
 
 # Plot 100 training images
 fig, ax = plt.subplots(nrows=10, ncols=10, figsize=(10, 10))
@@ -28,22 +28,22 @@ plt.close()
 
 # Normalize color values (here: grey-scales)
 train_images = train_images / 255.0
-test_images = test_images / 255.0
+val_images = val_images / 255.0
 
 # Expand pixel dimension (1 color channel)
 train_images = np.expand_dims(train_images, axis=3)
-test_images = np.expand_dims(test_images, axis=3)
+val_images = np.expand_dims(val_images, axis=3)
 
 # Do one-hot encoding / do categorical conversion
 train_labels = to_categorical(train_labels)
-test_labels = to_categorical(test_labels)
+val_labels = to_categorical(val_labels)
 
 # Extract number of classes from data dimensions
 nclasses = np.shape(train_labels)[1]
 
 # Define hyperparameters in dictionary for flexible use
 config = {'conv_layers': 1,  # 2
-          'conv_filters': 16,  # 64
+          'conv_filters': 18,  # 64
           'conv_kernel_size': 3,
           'conv_initializer': 'he_uniform',
           'conv_padding': 'same',
@@ -59,7 +59,7 @@ config = {'conv_layers': 1,  # 2
           'learning_rate': 0.001,  # 0.01
           'momentum': 0.9,
           'loss': 'categorical_crossentropy',
-          'epochs': 3}  # 10
+          'epochs': 10}  # 10
 
 # Define model architecture
 model = Sequential()
@@ -107,8 +107,8 @@ plot_model(model=model,
 tensorboard_callback = TensorBoard(log_dir='tensorboard/mnist_{}_cnn_{}'.format(ds_name, datetime.utcnow().strftime('%Y%m%d_%H-%M-%S')))
 
 # Train model
-model.fit(x=train_images, y=train_labels, epochs=config['epochs'], validation_data=(test_images, test_labels), callbacks=[tensorboard_callback])
+model.fit(x=train_images, y=train_labels, epochs=config['epochs'], validation_data=(val_images, val_labels), callbacks=[tensorboard_callback])
 
 # Evaluate model
-test_loss, test_acc = model.evaluate(test_images, test_labels)
-print('MNIST {} model - test accuracy: {:.2f}'.format(ds_name, test_acc))
+val_loss, val_acc = model.evaluate(val_images, val_labels)
+print('MNIST {} model - val. accuracy: {:.2f}'.format(ds_name, val_acc))

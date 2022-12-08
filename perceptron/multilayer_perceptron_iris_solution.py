@@ -145,6 +145,7 @@ train(epochs=20, learning_rate=0.1)
 # train(epochs=20, learning_rate=0.1, preprocessing='shift')
 
 # Further trials, more epochs
+# train(epochs=100, learning_rate=0.1)
 # train(epochs=100, learning_rate=0.05)
 # train(epochs=200, learning_rate=0.05)
 # train(epochs=100, learning_rate=0.1, preprocessing='scale')
