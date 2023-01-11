@@ -12,8 +12,8 @@ from tensorflow.python.keras.utils.vis_utils import plot_model
 
 
 # Load train and test data
-((train_images, train_labels), (val_images, val_labels)), ds_name = mnist.load_data(), 'digits'
-# ((train_images, train_labels), (val_images, val_labels)), ds_name = fashion_mnist.load_data(), 'fashion'
+((train_images, train_labels), (val_images, val_labels)), ds_name = mnist.load_data(), 'digits'  # 0.99
+# ((train_images, train_labels), (val_images, val_labels)), ds_name = fashion_mnist.load_data(), 'fashion'  # 0.91
 
 # Plot 100 training images
 fig, ax = plt.subplots(nrows=10, ncols=10, figsize=(10, 10))
@@ -42,24 +42,43 @@ val_labels = to_categorical(val_labels)
 nclasses = np.shape(train_labels)[1]
 
 # Define hyperparameters in dictionary for flexible use
-config = {'conv_layers': 1,  # 2
-          'conv_filters': 18,  # 64
+# config = {'conv_layers': 1,  # 2
+#           'conv_filters': 18,  # 64
+#           'conv_kernel_size': 3,
+#           'conv_initializer': 'he_uniform',
+#           'conv_padding': 'same',
+#           'conv_activation_function': 'relu',
+#           'conv_dropout_rate': 0,  # 0.1
+#           'maxpool_stride': 2,
+#           'maxpool_kernel_size': 2,
+#           'fc_layers': 2,
+#           'fc_neurons': 16,  # 100
+#           'fc_activation_function': 'relu',
+#           'fc_initializer': 'he_uniform',
+#           'fc_dropout_rate': 0,  # 0.1
+#           'learning_rate': 0.001,  # 0.01
+#           'momentum': 0.9,
+#           'loss': 'categorical_crossentropy',
+#           'epochs': 2}  # 10
+
+config = {'conv_layers': 2,
+          'conv_filters': 64,
           'conv_kernel_size': 3,
           'conv_initializer': 'he_uniform',
           'conv_padding': 'same',
           'conv_activation_function': 'relu',
-          'conv_dropout_rate': 0,  # 0.1
+          'conv_dropout_rate': 0.1,
           'maxpool_stride': 2,
           'maxpool_kernel_size': 2,
           'fc_layers': 2,
-          'fc_neurons': 16,  # 100
+          'fc_neurons': 100,
           'fc_activation_function': 'relu',
           'fc_initializer': 'he_uniform',
-          'fc_dropout_rate': 0,  # 0.1
-          'learning_rate': 0.001,  # 0.01
+          'fc_dropout_rate': 0.1,
+          'learning_rate': 0.01,
           'momentum': 0.9,
           'loss': 'categorical_crossentropy',
-          'epochs': 10}  # 10
+          'epochs': 10}
 
 # Define model architecture
 model = Sequential()
