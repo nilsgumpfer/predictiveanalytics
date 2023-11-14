@@ -12,6 +12,7 @@ def plot_training_data(X, Y):
     plt.axhline(y=0.5, color='grey', linestyle='--')
     plt.axvline(x=0.5, color='grey', linestyle='--')
     plt.show()
+    plt.close()
 
 
 def plot_training_data_and_activations(X, Y, activations):
@@ -28,6 +29,7 @@ def plot_training_data_and_activations(X, Y, activations):
     ax.set_zlim([0, 1])
     ax.set_zlabel('Activation')
     plt.show()
+    plt.close()
 
 
 def plot_error_gradient(W1, W2, E, final_w1, final_w2, final_e):
@@ -41,10 +43,11 @@ def plot_error_gradient(W1, W2, E, final_w1, final_w2, final_e):
     ax.set_ylabel('w2')
     # ax.set_yticks([-10, -5, 0, 5, 10])
     # ax.set_yticks([-1, -0.5, 0, 0.5, 1])
-    ax.set_zlim([0, 1])
-    ax.set_zticks([0, 0.25, 0.5, 0.75, 1])
+    # ax.set_zlim([0, 1])
+    # ax.set_zticks([0, 0.25, 0.5, 0.75, 1])
     ax.set_zlabel('Error')
     plt.show()
+    plt.close()
 
 
 def generate_data(n, label):
@@ -145,7 +148,7 @@ def train(label, activation_function, epochs, learning_rate, weight_init, bias=T
     validation_inputs = [np.array([1, 1]), np.array([1, 0.01]), np.array([0.01, 1]), np.array([0.01, 0.01])]
     training_inputs, labels = generate_data(100, label)
 
-    plot_training_data(training_inputs, labels)
+    # plot_training_data(training_inputs, labels)
 
     perceptron = Perceptron(activation_function=activation_function, epochs=epochs, learning_rate=learning_rate, bias=bias, weight_init=weight_init)
     perceptron.train(training_inputs, labels)
@@ -159,62 +162,42 @@ def train(label, activation_function, epochs, learning_rate, weight_init, bias=T
     for x in training_inputs:
         predictions.append(perceptron.predict(x))
 
-    print('Learned weights: w1={}, w2={}, wb={}'.format(perceptron.weights[1], perceptron.weights[2], perceptron.weights[0]))
+    final_e = mean_squared_error(labels, predictions)
+    final_wb = perceptron.weights[0]
+    final_w1 = perceptron.weights[1]
+    final_w2 = perceptron.weights[2]
 
-    plot_training_data_and_activations(training_inputs, labels, predictions)
+    print('Learned weights: w1={:.4f}, w2={:.4f}, wb={:.4f}'.format(final_w1, final_w2, final_wb))
 
-
-def gradient(label, activation_function, epochs, learning_rate, weight_init, bias_init=0.0):
-    np.random.seed(1)
-    training_inputs, labels = generate_data(100, label)
-
-    if bias_init != 0.0:
-        bias = True
-    else:
-        bias = False
-
-    perceptron = Perceptron(activation_function=activation_function, epochs=epochs, learning_rate=learning_rate, bias=bias, weight_init=weight_init)
-
-    perceptron.weights[0] = bias_init
+    # plot_training_data_and_activations(training_inputs, labels, predictions)
 
     weights1 = []
     weights2 = []
     errors = []
+    factor = 5
+    precision = 80
 
-    for w1 in np.arange(start=-1, stop=1, step=0.05):
-        for w2 in np.arange(start=-1, stop=1, step=0.05):
+    for w1 in np.linspace(start=final_w1-final_w1*factor, stop=final_w1+final_w1*factor, num=precision):
+        for w2 in np.linspace(start=final_w2-final_w2*factor, stop=final_w2+final_w2*factor, num=precision):
             perceptron.weights[1] = w1
             perceptron.weights[2] = w2
 
-            predictions = []
+            predictions_tmp = []
 
             for x, y in zip(training_inputs, labels):
-                predictions.append(perceptron.predict(x))
+                predictions_tmp.append(perceptron.predict(x))
 
-            e = mean_squared_error(labels, predictions)
+            e = mean_squared_error(labels, predictions_tmp)
 
             weights1.append(w1)
             weights2.append(w2)
             errors.append(e)
 
-    perceptron.weights[1] = weight_init
-    perceptron.weights[2] = weight_init
-    perceptron.train(training_inputs, labels)
-
-    predictions = []
-
-    for x, y in zip(training_inputs, labels):
-        predictions.append(perceptron.predict(x))
-
-    final_e = mean_squared_error(labels, predictions)
-
-    print('Learned weights: w1={}, w2={}, wb=None'.format(perceptron.weights[1], perceptron.weights[2]))
-
-    plot_error_gradient(weights1, weights2, errors, final_w1=perceptron.weights[1], final_w2=perceptron.weights[2], final_e=final_e)
+    plot_error_gradient(weights1, weights2, errors, final_w1=final_w2, final_w2=final_w2, final_e=final_e)
 
 
 # Static activations, Slides 52-62
-train(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
+# train(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
 # train(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
 # train(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
 # train(label='AND', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
@@ -223,6 +206,9 @@ train(label='AND', activation_function='binary', epochs=50, learning_rate=0.001,
 # train(label='AND', activation_function='sigmoid', epochs=1000, learning_rate=0.001, weight_init=0.0)
 # train(label='OR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
 # train(label='XOR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
+train(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
+train(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
+train(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
 
 # Static error gradients, Slides 65-73
 # gradient(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
@@ -234,4 +220,3 @@ train(label='AND', activation_function='binary', epochs=50, learning_rate=0.001,
 # gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
 # gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
 # gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
-
