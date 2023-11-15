@@ -1,6 +1,8 @@
 import math
+import os
 from math import tanh
 
+import imageio
 import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
@@ -38,16 +40,36 @@ def plot_error_gradient(W1, W2, E, final_w1, final_w2, final_e):
     ax.scatter(xs=W1, ys=W2, zs=E, c=E, cmap='viridis')
     ax.scatter(xs=final_w1, ys=final_w2, zs=final_e, c='r', s=300)
     ax.set_xlabel('w1')
-    # ax.set_xticks([-10, -5, 0, 5, 10])
-    # ax.set_xticks([-1, -0.5, 0, 0.5, 1])
     ax.set_ylabel('w2')
-    # ax.set_yticks([-10, -5, 0, 5, 10])
-    # ax.set_yticks([-1, -0.5, 0, 0.5, 1])
-    # ax.set_zlim([0, 1])
-    # ax.set_zticks([0, 0.25, 0.5, 0.75, 1])
     ax.set_zlabel('Error')
     plt.show()
     plt.close()
+
+
+def plot_error_gradient_course(W1, W2, E, epoch=None, w1_course=None, w2_course=None, save_to=None):
+    fig = plt.figure(figsize=(7, 7))
+    ax = fig.add_subplot(projection='3d')
+    ax.plot(w1_course[:epoch], w2_course[:epoch], np.array(E[:epoch])*1.5, c='r', lw=5)
+    ax.scatter(xs=W1, ys=W2, zs=E, c=E, cmap='viridis')
+    ax.set_xlabel('w1')
+    ax.set_ylabel('w2')
+    ax.set_zlabel('Error')
+    ax.view_init(azim=-135, elev=90)
+
+    if epoch is not None:
+        ax.set_title('Epoch {}, Error: {:.3f}'.format(epoch, E[epoch]))
+
+    # plt.show()
+    # plt.close()
+
+    if save_to is None:
+        plt.show()
+    else:
+        plt.savefig(save_to)
+
+    plt.close()
+
+    return save_to
 
 
 def generate_data(n, label):
@@ -78,11 +100,14 @@ def generate_data(n, label):
 
 class Perceptron(object):
     def __init__(self, no_of_inputs=2, epochs=200, learning_rate=0.01, activation_function='binary', bias=True, weight_init=0.0):
+        self.history_predictions = []
+        self.history_weights = np.zeros((no_of_inputs, epochs + 1))
         self.epochs = epochs
         self.learning_rate = learning_rate
         self.weights = np.ones(no_of_inputs + 1) * weight_init
         self.activation_function = activation_function
         self.bias = bias
+        self.no_of_inputs = no_of_inputs
 
     def predict(self, inputs):
         if self.bias:
@@ -94,6 +119,7 @@ class Perceptron(object):
 
     def train(self, training_inputs, labels):
         for e in range(self.epochs):
+            predictions_tmp = []
             for inputs, label in zip(training_inputs, labels):
                 prediction = self.predict(inputs)
                 error = (label - prediction)
@@ -101,6 +127,12 @@ class Perceptron(object):
                 self.weights[1:] += self.learning_rate * d_error * inputs
                 if self.bias:
                     self.weights[0] += self.learning_rate * d_error * 1
+                predictions_tmp.append(prediction)
+
+            self.history_predictions.append(predictions_tmp)
+
+            for i in range(self.no_of_inputs):
+                self.history_weights[i][e] = self.weights[i + 1]
 
     def _activation(self, summation):
         if self.activation_function == 'binary':
@@ -143,6 +175,32 @@ class Perceptron(object):
             return 1 / (1 + math.e ** -output)
 
 
+def generate_gif_from_plots(prefix, paths, params):
+    images = []
+
+    for filename in paths:
+        images.append(imageio.imread(filename))
+
+    imageio.mimsave('plots/{}_{}.gif'.format(prefix, params), images)
+
+
+def plot_gradient_descend(perceptron, label, activation_function, epochs, learning_rate, weight_init, training_inputs, labels, weights1, weights2, errors):
+    os.makedirs('plots/frames/', exist_ok=True)
+
+    params = '{}_{}_{}_{}_{}'.format(label, activation_function, epochs, str(learning_rate).replace('.', '-'), weight_init)
+
+    paths_grad = []
+    paths_activ = []
+
+    for epoch, p in zip(range(epochs + 1), perceptron.history_predictions):
+        # Only plot error gradient if no bias was used
+        paths_grad.append(plot_error_gradient_course(W1=weights1, W2=weights2, E=errors, w1_course=perceptron.history_weights[0], w2_course=perceptron.history_weights[1], epoch=epoch, save_to='plots/frames/gradientdescent_{}_{}.png'.format(params, epoch)))
+
+    # Based on the generated plots, GIF images are generated
+    # Only plot error gradient if no bias was used
+    generate_gif_from_plots('gradientdescent', paths_grad, params)
+
+
 def train(label, activation_function, epochs, learning_rate, weight_init, bias=True):
     np.random.seed(1)
     validation_inputs = [np.array([1, 1]), np.array([1, 0.01]), np.array([0.01, 1]), np.array([0.01, 0.01])]
@@ -174,7 +232,7 @@ def train(label, activation_function, epochs, learning_rate, weight_init, bias=T
     weights1 = []
     weights2 = []
     errors = []
-    factor = 5
+    factor = 3
     precision = 80
 
     for w1 in np.linspace(start=final_w1-final_w1*factor, stop=final_w1+final_w1*factor, num=precision):
@@ -193,7 +251,9 @@ def train(label, activation_function, epochs, learning_rate, weight_init, bias=T
             weights2.append(w2)
             errors.append(e)
 
-    plot_error_gradient(weights1, weights2, errors, final_w1=final_w2, final_w2=final_w2, final_e=final_e)
+    # plot_error_gradient(weights1, weights2, errors, final_w1=final_w2, final_w2=final_w2, final_e=final_e)
+
+    plot_gradient_descend(perceptron, label, activation_function, epochs, learning_rate, weight_init, training_inputs, labels, weights1, weights2, errors)
 
 
 # Static activations, Slides 52-62
@@ -206,9 +266,12 @@ def train(label, activation_function, epochs, learning_rate, weight_init, bias=T
 # train(label='AND', activation_function='sigmoid', epochs=1000, learning_rate=0.001, weight_init=0.0)
 # train(label='OR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
 # train(label='XOR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
-train(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
-train(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
-train(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
+# train(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
+# train(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
+# train(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
+
+train(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=3.0)
+
 
 # Static error gradients, Slides 65-73
 # gradient(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
