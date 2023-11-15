@@ -46,21 +46,27 @@ def plot_error_gradient(W1, W2, E, final_w1, final_w2, final_e):
     plt.close()
 
 
-def plot_error_gradient_course(W1, W2, E, epoch=None, w1_course=None, w2_course=None, save_to=None):
+def plot_error_gradient_course(W1, W2, E, epoch=None, w_course=None, w1_course=None, w2_course=None, save_to=None):
     fig = plt.figure(figsize=(7, 7))
-    ax = fig.add_subplot(projection='3d')
-    ax.plot(w1_course[:epoch], w2_course[:epoch], np.array(E[:epoch])*1.5, c='r', lw=5)
-    ax.scatter(xs=W1, ys=W2, zs=E, c=E, cmap='viridis')
+    # ax = fig.add_subplot(projection='3d')
+    ax = fig.add_subplot()
+    # ax.scatter(xs=W1, ys=W2, zs=E, c=E, cmap='viridis')
+
+    xv, yv = np.meshgrid(W1, W2, indexing='ij')
+    ax.matshow(w_course, cmap='viridis')
+    ax.plot(w1_course[:epoch], w2_course[:epoch], c='r', lw=2)
+
     ax.set_xlabel('w1')
     ax.set_ylabel('w2')
-    ax.set_zlabel('Error')
-    ax.view_init(azim=-135, elev=90)
+    # ax.set_zlabel('Error')
+    # ax.view_init(azim=-135, elev=90)
 
     if epoch is not None:
         ax.set_title('Epoch {}, Error: {:.3f}'.format(epoch, E[epoch]))
 
-    # plt.show()
-    # plt.close()
+
+    plt.show()
+    plt.close()
 
     if save_to is None:
         plt.show()
@@ -194,7 +200,7 @@ def plot_gradient_descend(perceptron, label, activation_function, epochs, learni
 
     for epoch, p in zip(range(epochs + 1), perceptron.history_predictions):
         # Only plot error gradient if no bias was used
-        paths_grad.append(plot_error_gradient_course(W1=weights1, W2=weights2, E=errors, w1_course=perceptron.history_weights[0], w2_course=perceptron.history_weights[1], epoch=epoch, save_to='plots/frames/gradientdescent_{}_{}.png'.format(params, epoch)))
+        paths_grad.append(plot_error_gradient_course(W1=weights1, W2=weights2, E=errors, w_course=perceptron.history_weights, w1_course=perceptron.history_weights[0], w2_course=perceptron.history_weights[1], epoch=epoch, save_to='plots/frames/gradientdescent_{}_{}.png'.format(params, epoch)))
 
     # Based on the generated plots, GIF images are generated
     # Only plot error gradient if no bias was used
@@ -270,7 +276,7 @@ def train(label, activation_function, epochs, learning_rate, weight_init, bias=T
 # train(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
 # train(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
 
-train(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=3.0)
+train(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=1.0)
 
 
 # Static error gradients, Slides 65-73
