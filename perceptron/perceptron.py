@@ -2,7 +2,7 @@ import math
 import os
 from math import tanh
 
-import imageio
+import imageio.v2 as imageio
 import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
@@ -63,7 +63,7 @@ def plot_error_gradient_course(W1, W2, E, epoch, w1_course, w2_course, save_to=N
 
     ax.tricontour(W1, W2, E, levels=100, linewidths=0.5, colors='k')
     cntr = ax.tricontourf(W1, W2, E, levels=100, cmap="viridis")
-    ax.plot(w1_course[:epoch], w2_course[:epoch], c='r', lw=0.5)
+    ax.plot(w1_course[:epoch], w2_course[:epoch], c='r', lw=1)
     fig.colorbar(cntr, label='error')
     ax.set_xlabel('w1')
     ax.set_ylabel('w2')
@@ -195,7 +195,7 @@ def generate_gif_from_plots(prefix, paths, params, cleanup=False):
     for filename in paths:
         images.append(imageio.imread(filename))
 
-    imageio.mimsave('plots/{}_{}.gif'.format(prefix, params), images)
+    imageio.mimsave('plots/{}_{}.gif'.format(prefix, params), images, loop=0)
 
     if cleanup:
         for x in paths:
@@ -232,7 +232,7 @@ def plot_training_data_and_activations_over_time(perceptron, label, activation_f
     generate_gif_from_plots('activations', paths, params, cleanup=True)
 
 
-def train(label, activation_function, epochs, learning_rate, weight_init, bias=True, learning_rate_decay=0.0, interactive=True):
+def train(label, activation_function, epochs, learning_rate, weight_init, bias=True, learning_rate_decay=0.0, interactive=True, precision=150, padding=0.2):
     np.random.seed(1)
     validation_inputs = [np.array([1, 1]), np.array([1, 0.01]), np.array([0.01, 1]), np.array([0.01, 0.01])]
     training_inputs, labels = generate_data(100, label)
@@ -257,7 +257,7 @@ def train(label, activation_function, epochs, learning_rate, weight_init, bias=T
     final_w1 = perceptron.weights[1]
     final_w2 = perceptron.weights[2]
 
-    print('Learned weights: w1={:.4f}, w2={:.4f}, wb={:.4f}'.format(final_w1, final_w2, final_wb))
+    print('Learned weights: w1={:.4f}, w2={:.4f}, wb={:.4f}, Final error (MSE): {:.4f}'.format(final_w1, final_w2, final_wb, final_e))
 
     if interactive:
         plot_training_data_and_activations(training_inputs, labels, predictions)
@@ -266,11 +266,13 @@ def train(label, activation_function, epochs, learning_rate, weight_init, bias=T
     weights2 = []
     errors = []
 
-    precision = 80
-    lim = 3
+    w1_low = np.min([weight_init, final_w1]) - padding
+    w1_high = np.max([weight_init, final_w1]) + padding
+    w2_low = np.min([weight_init, final_w2]) - padding
+    w2_high = np.max([weight_init, final_w2]) + padding
 
-    for w1 in np.linspace(start=final_w1-lim, stop=final_w1+lim, num=precision):
-        for w2 in np.linspace(start=final_w2-lim, stop=final_w2+lim, num=precision):
+    for w1 in np.linspace(start=w1_low, stop=w1_high, num=precision):
+        for w2 in np.linspace(start=w2_low, stop=w2_high, num=precision):
             perceptron.weights[1] = w1
             perceptron.weights[2] = w2
             weights1.append(w1)
@@ -285,63 +287,55 @@ def train(label, activation_function, epochs, learning_rate, weight_init, bias=T
             errors.append(e)
 
     if interactive:
-        plot_error_gradient(weights1, weights2, errors, final_w1=final_w2, final_w2=final_w2, final_e=final_e)
+        plot_error_gradient(weights1, weights2, errors, final_w1=final_w1, final_w2=final_w2, final_e=final_e)
 
-    # if bias:
-    #     errors_bias_specific = np.zeros((epochs + 1, precision**2))
-    #
-    #     for i, wb in enumerate(perceptron.history_weights[0]):
-    #         errors_tmp = []
-    #
-    #         for w1 in np.linspace(start=final_w1 - lim, stop=final_w1 + lim, num=precision):
-    #             for w2 in np.linspace(start=final_w2 - lim, stop=final_w2 + lim, num=precision):
-    #                 perceptron.weights[0] = wb
-    #                 perceptron.weights[1] = w1
-    #                 perceptron.weights[2] = w2
-    #
-    #                 predictions_tmp = []
-    #
-    #                 for x, y in zip(training_inputs, labels):
-    #                     predictions_tmp.append(perceptron.predict(x))
-    #
-    #                 e = mean_squared_error(labels, predictions_tmp)
-    #                 errors_tmp.append(e)
-    #
-    #         errors_bias_specific[i] = np.array(errors_tmp)
-    #
-    #     errors = errors_bias_specific
-    #
-    # plot_gradient_descend(perceptron, label, activation_function, epochs, learning_rate, learning_rate_decay, weight_init, weights1, weights2, errors, bias)
+    if bias and not interactive:
+        errors_bias_specific = np.zeros((epochs + 1, precision**2))
+
+        for i, wb in enumerate(perceptron.history_weights[0]):
+            errors_tmp = []
+
+            for w1 in np.linspace(start=w1_low, stop=w1_high, num=precision):
+                for w2 in np.linspace(start=w2_low, stop=w2_high, num=precision):
+                    perceptron.weights[0] = wb
+                    perceptron.weights[1] = w1
+                    perceptron.weights[2] = w2
+
+                    predictions_tmp = []
+
+                    for x, y in zip(training_inputs, labels):
+                        predictions_tmp.append(perceptron.predict(x))
+
+                    e = mean_squared_error(labels, predictions_tmp)
+                    errors_tmp.append(e)
+
+            errors_bias_specific[i] = np.array(errors_tmp)
+
+        errors = errors_bias_specific
+
+    if not interactive:
+        plot_gradient_descend(perceptron, label, activation_function, epochs, learning_rate, learning_rate_decay, weight_init, weights1, weights2, errors, bias)
+
     plot_training_data_and_activations_over_time(perceptron, label, activation_function, epochs, learning_rate, learning_rate_decay, weight_init, training_inputs, labels, bias)
 
 
 # Static activations, Slides 52-62
-# train(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0, interactive=False)
-# train(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0, interactive=False)
-# train(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0, interactive=False)
-# train(label='AND', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=0.0, interactive=False)
-# train(label='OR', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=0.0, interactive=False)
-# train(label='XOR', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=0.0, interactive=False)
-train(label='AND', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=0.0, interactive=False)
-train(label='OR', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=0.0, interactive=False)
-train(label='XOR', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=0.0, interactive=False)
+# train(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0, interactive=True, precision=150, padding=0.2)
+# train(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0, interactive=True, precision=150, padding=0.2)
+# train(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0, interactive=True, precision=150, padding=0.2)
+# train(label='AND', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=0.0, interactive=True, precision=50, padding=2)
+# train(label='OR', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=0.0, interactive=True, precision=50, padding=2)
+# train(label='XOR', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=0.0, interactive=True, precision=50, padding=2)
+# train(label='AND', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=0.0, interactive=True, precision=50, padding=2)
+# train(label='OR', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=0.0, interactive=True, precision=50, padding=2)
+# train(label='XOR', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=0.0, interactive=True, precision=50, padding=2)
+# TODO: save error gradients?
 
 # Coole Beispiele:
-# train(label='AND', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=0, interactive=False)
-# train(label='AND', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=2.5, interactive=False)
-# train(label='XOR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=2.5, interactive=False, bias=False)
-# train(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=2.5, interactive=False, bias=False)
-# train(label='AND', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=2.5, interactive=False, bias=False)
-# train(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=2.5, interactive=False)
-# train(label='AND', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=2.5, interactive=False)
-
-# Static error gradients, Slides 65-73
-# gradient(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
-# gradient(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
-# gradient(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
-# gradient(label='AND', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
-# gradient(label='OR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
-# gradient(label='XOR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=0.0)
-# gradient(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
-# gradient(label='OR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
-# gradient(label='XOR', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=0.0)
+train(label='AND', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=0, interactive=False, precision=50, padding=0.5)
+train(label='AND', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=2.5, interactive=False, precision=50, padding=0.5)
+train(label='XOR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=2.5, interactive=False, bias=False, precision=50, padding=0.5)
+train(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=2.5, interactive=False, bias=False, precision=50, padding=0.5)
+train(label='AND', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=2.5, interactive=False, bias=False, precision=50, padding=0.5)
+train(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=2.5, interactive=False, precision=50, padding=0.5)
+train(label='AND', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=2.5, interactive=False, precision=50, padding=0.5)
