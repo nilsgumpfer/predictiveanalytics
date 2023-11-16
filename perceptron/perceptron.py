@@ -266,10 +266,10 @@ def train(label, activation_function, epochs, learning_rate, weight_init, bias=T
     weights2 = []
     errors = []
 
-    w1_low = np.min([weight_init, final_w1]) - padding
-    w1_high = np.max([weight_init, final_w1]) + padding
-    w2_low = np.min([weight_init, final_w2]) - padding
-    w2_high = np.max([weight_init, final_w2]) + padding
+    w1_low = np.min([weight_init, np.min(perceptron.history_weights[1])]) - padding
+    w1_high = np.max([weight_init, np.max(perceptron.history_weights[1])]) + padding
+    w2_low = np.min([weight_init, np.min(perceptron.history_weights[2])]) - padding
+    w2_high = np.max([weight_init, np.max(perceptron.history_weights[2])]) + padding
 
     for w1 in np.linspace(start=w1_low, stop=w1_high, num=precision):
         for w2 in np.linspace(start=w2_low, stop=w2_high, num=precision):
@@ -329,13 +329,32 @@ def train(label, activation_function, epochs, learning_rate, weight_init, bias=T
 # train(label='AND', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=0.0, interactive=True, precision=50, padding=2)
 # train(label='OR', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=0.0, interactive=True, precision=50, padding=2)
 # train(label='XOR', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=0.0, interactive=True, precision=50, padding=2)
-# TODO: save error gradients?
 
 # Coole Beispiele:
-train(label='AND', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=0, interactive=False, precision=50, padding=0.5)
-train(label='AND', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=2.5, interactive=False, precision=50, padding=0.5)
-train(label='XOR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=2.5, interactive=False, bias=False, precision=50, padding=0.5)
-train(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=2.5, interactive=False, bias=False, precision=50, padding=0.5)
-train(label='AND', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=2.5, interactive=False, bias=False, precision=50, padding=0.5)
-train(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=2.5, interactive=False, precision=50, padding=0.5)
-train(label='AND', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=2.5, interactive=False, precision=50, padding=0.5)
+# train(label='AND', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=0, interactive=False, precision=50, padding=0.5)
+# train(label='AND', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=2.5, interactive=False, precision=50, padding=0.5)
+# train(label='AND', activation_function='sigmoid', epochs=100, learning_rate=0.01, weight_init=0, interactive=False, precision=50, padding=0.5)
+# train(label='AND', activation_function='sigmoid', epochs=100, learning_rate=0.01, weight_init=2.5, interactive=False, precision=50, padding=0.5)
+# train(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=2.5, interactive=False, bias=False, precision=50, padding=0.5)
+# train(label='AND', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=2.5, interactive=False, bias=False, precision=50, padding=0.5)
+# train(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=2.5, interactive=False, precision=50, padding=0.5)
+# train(label='AND', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=2.5, interactive=False, precision=50, padding=0.5)
+
+# TODO: insert to MD (top)
+train(label='AND', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=1, interactive=False, precision=150, padding=0.2)
+train(label='AND', activation_function='binary', epochs=100, learning_rate=0.01, weight_init=1, interactive=False, precision=150, padding=0.2)
+train(label='AND', activation_function='binary', epochs=100, learning_rate=0.1, weight_init=1, interactive=False, precision=150, padding=0.2)
+train(label='AND', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=0.1, interactive=False, precision=150, padding=0.2)
+train(label='AND', activation_function='binary', epochs=100, learning_rate=0.01, weight_init=0.1, interactive=False, precision=150, padding=0.2)
+train(label='AND', activation_function='binary', epochs=100, learning_rate=0.1, weight_init=0.1, interactive=False, precision=150, padding=0.2)
+train(label='AND', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=0, interactive=False, precision=150, padding=0.2)
+train(label='AND', activation_function='binary', epochs=100, learning_rate=0.01, weight_init=0, interactive=False, precision=150, padding=0.2)
+train(label='AND', activation_function='binary', epochs=100, learning_rate=0.1, weight_init=0, interactive=False, precision=150, padding=0.2)
+
+# TODO: insert to MD (bottom)
+# train(label='XOR', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=0.0, interactive=False, precision=50, padding=2)
+# train(label='XOR', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=0.0, interactive=False, precision=50, padding=2)
+# train(label='XOR', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=2.5, interactive=False, precision=50, padding=2)
+# train(label='XOR', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=2.5, interactive=False, precision=50, padding=2)
+
+
