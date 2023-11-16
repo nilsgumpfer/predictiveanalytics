@@ -1,8 +1,5 @@
 ## AND
 
-### Binary
-
-
 ### ReLU
 
 #### weight_init=2.5, learning_rate=0.001, bias=False
