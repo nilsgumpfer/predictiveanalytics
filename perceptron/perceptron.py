@@ -319,7 +319,7 @@ def train(label, activation_function, epochs, learning_rate, weight_init, bias=T
     plot_training_data_and_activations_over_time(perceptron, label, activation_function, epochs, learning_rate, learning_rate_decay, weight_init, training_inputs, labels, bias)
 
 
-# Static activations, Slides 52-62
+# Basic examples
 # train(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0, interactive=True, precision=150, padding=0.2)
 # train(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0, interactive=True, precision=150, padding=0.2)
 # train(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0, interactive=True, precision=150, padding=0.2)
@@ -330,7 +330,7 @@ def train(label, activation_function, epochs, learning_rate, weight_init, bias=T
 # train(label='OR', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=0.0, interactive=True, precision=50, padding=2)
 # train(label='XOR', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=0.0, interactive=True, precision=50, padding=2)
 
-# Coole Beispiele:
+# Advanced examples:
 # train(label='AND', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=0, interactive=False, precision=50, padding=0.5)
 # train(label='AND', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=2.5, interactive=False, precision=50, padding=0.5)
 # train(label='AND', activation_function='sigmoid', epochs=100, learning_rate=0.01, weight_init=0, interactive=False, precision=50, padding=0.5)
@@ -339,22 +339,22 @@ def train(label, activation_function, epochs, learning_rate, weight_init, bias=T
 # train(label='AND', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=2.5, interactive=False, bias=False, precision=50, padding=0.5)
 # train(label='AND', activation_function='relu', epochs=50, learning_rate=0.001, weight_init=2.5, interactive=False, precision=50, padding=0.5)
 # train(label='AND', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=2.5, interactive=False, precision=50, padding=0.5)
-
-# TODO: insert to MD (top)
-train(label='AND', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=1, interactive=False, precision=150, padding=0.2)
-train(label='AND', activation_function='binary', epochs=100, learning_rate=0.01, weight_init=1, interactive=False, precision=150, padding=0.2)
-train(label='AND', activation_function='binary', epochs=100, learning_rate=0.1, weight_init=1, interactive=False, precision=150, padding=0.2)
-train(label='AND', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=0.1, interactive=False, precision=150, padding=0.2)
-train(label='AND', activation_function='binary', epochs=100, learning_rate=0.01, weight_init=0.1, interactive=False, precision=150, padding=0.2)
-train(label='AND', activation_function='binary', epochs=100, learning_rate=0.1, weight_init=0.1, interactive=False, precision=150, padding=0.2)
-train(label='AND', activation_function='binary', epochs=100, learning_rate=0.001, weight_init=0, interactive=False, precision=150, padding=0.2)
-train(label='AND', activation_function='binary', epochs=100, learning_rate=0.01, weight_init=0, interactive=False, precision=150, padding=0.2)
-train(label='AND', activation_function='binary', epochs=100, learning_rate=0.1, weight_init=0, interactive=False, precision=150, padding=0.2)
-
-# TODO: insert to MD (bottom)
 # train(label='XOR', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=0.0, interactive=False, precision=50, padding=2)
 # train(label='XOR', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=0.0, interactive=False, precision=50, padding=2)
 # train(label='XOR', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=2.5, interactive=False, precision=50, padding=2)
 # train(label='XOR', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=2.5, interactive=False, precision=50, padding=2)
+
+# TODO: insert to MD (top)
+train(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=1, interactive=False, precision=80, padding=0.2)
+train(label='AND', activation_function='binary', epochs=50, learning_rate=0.01, weight_init=1, interactive=False, precision=80, padding=0.2)
+train(label='AND', activation_function='binary', epochs=50, learning_rate=0.1, weight_init=1, interactive=False, precision=80, padding=0.2)
+train(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.1, interactive=False, precision=80, padding=0.2)
+train(label='AND', activation_function='binary', epochs=50, learning_rate=0.01, weight_init=0.1, interactive=False, precision=80, padding=0.2)
+train(label='AND', activation_function='binary', epochs=50, learning_rate=0.1, weight_init=0.1, interactive=False, precision=80, padding=0.2)
+train(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0, interactive=False, precision=80, padding=0.2)
+train(label='AND', activation_function='binary', epochs=50, learning_rate=0.01, weight_init=0, interactive=False, precision=80, padding=0.2)
+train(label='AND', activation_function='binary', epochs=50, learning_rate=0.1, weight_init=0, interactive=False, precision=80, padding=0.2)
+
+
 
 
