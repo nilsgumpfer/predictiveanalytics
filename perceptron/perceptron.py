@@ -51,6 +51,7 @@ def plot_error_gradient_course(W1, W2, E, epoch=None, w1_course=None, w2_course=
     ax = fig.add_subplot()
 
     ax.tricontour(W1, W2, E, levels=100, linewidths=0.5, colors='k')
+    # cntr = ax.tricontourf(W1, W2, E, levels=100, cmap="viridis")
     cntr = ax.tricontourf(W1, W2, E, levels=100, cmap="viridis")
     ax.plot(w1_course[:epoch], w2_course[:epoch], c='r', lw=0.5)
     fig.colorbar(cntr, label='error')
@@ -101,7 +102,8 @@ def generate_data(n, label):
 class Perceptron(object):
     def __init__(self, no_of_inputs=2, epochs=200, learning_rate=0.01, learning_rate_decay=0.0, activation_function='binary', bias=True, weight_init=0.0):
         self.history_predictions = []
-        self.history_weights = np.zeros((no_of_inputs, epochs + 1))
+        # self.history_weights = np.zeros((no_of_inputs, epochs + 1))
+        self.history_weights = np.zeros((no_of_inputs + 1, epochs + 1))
         self.epochs = epochs
         self.learning_rate = learning_rate
         self.learning_rate_decay = learning_rate_decay
@@ -119,8 +121,9 @@ class Perceptron(object):
         return self._activation(summation)
 
     def train(self, training_inputs, labels):
-        for i in range(self.no_of_inputs):
-            self.history_weights[i][0] = self.weights[i + 1]
+        # for i in range(self.no_of_inputs):
+        #     self.history_weights[i][0] = self.weights[i + 1]
+        self.history_weights[..., 0] = self.weights
 
         for e in range(self.epochs):
             predictions_tmp = []
@@ -135,8 +138,9 @@ class Perceptron(object):
 
             self.history_predictions.append(predictions_tmp)
 
-            for i in range(self.no_of_inputs):
-                self.history_weights[i][e+1] = self.weights[i + 1]
+            # for i in range(self.no_of_inputs):
+            #     self.history_weights[i][e+1] = self.weights[i + 1]
+            self.history_weights[..., e+1] = self.weights
 
             self.learning_rate -= self.learning_rate_decay
 
@@ -196,20 +200,22 @@ def generate_gif_from_plots(prefix, paths, params, cleanup=False):
             os.remove(x)
 
 
-def plot_gradient_descend(perceptron, label, activation_function, epochs, learning_rate, learning_rate_decay, weight_init, training_inputs, labels, weights1, weights2, errors):
+def plot_gradient_descend(perceptron, label, activation_function, epochs, learning_rate, learning_rate_decay, weight_init, training_inputs, labels, weights1, weights2, errors, bias):
     os.makedirs('plots/frames/', exist_ok=True)
 
-    params = '{}_{}_{}_{}_{}_{}'.format(label, activation_function, epochs, str(learning_rate).replace('.', '-'), str(learning_rate_decay).replace('.', '-'), weight_init)
+    params = '{}_{}_{}_{}_{}_{}_b{}'.format(label, activation_function, epochs, str(learning_rate).replace('.', '-'), str(learning_rate_decay).replace('.', '-'), weight_init, bias)
 
     paths_grad = []
     paths_activ = []
 
     for epoch, p in zip(range(epochs + 1), perceptron.history_predictions):
-        # Only plot error gradient if no bias was used
-        paths_grad.append(plot_error_gradient_course(W1=np.array(weights1), W2=np.array(weights2), E=np.array(errors), w1_course=perceptron.history_weights[0], w2_course=perceptron.history_weights[1], epoch=epoch, save_to='plots/frames/gradientdescent_{}_{}.png'.format(params, epoch)))
+        if bias:
+            E = np.array(errors[epoch])
+        else:
+            E = np.array(errors)
+        paths_grad.append(plot_error_gradient_course(W1=np.array(weights1), W2=np.array(weights2), E=E, w1_course=perceptron.history_weights[1], w2_course=perceptron.history_weights[2], epoch=epoch, save_to='plots/frames/gradientdescent_{}_{}.png'.format(params, epoch)))
 
     # Based on the generated plots, GIF images are generated
-    # Only plot error gradient if no bias was used
     generate_gif_from_plots('gradientdescent', paths_grad, params, cleanup=True)
 
 
@@ -253,10 +259,16 @@ def train(label, activation_function, epochs, learning_rate, weight_init, bias=T
         factor = 5
     precision = 80
 
-    for w1 in np.linspace(start=final_w1-final_w1*factor, stop=final_w1+final_w1*factor, num=precision):
-        for w2 in np.linspace(start=final_w2-final_w2*factor, stop=final_w2+final_w2*factor, num=precision):
+    lim = 3
+
+    # for w1 in np.linspace(start=final_w1-final_w1*factor, stop=final_w1+final_w1*factor, num=precision):
+        # for w2 in np.linspace(start=final_w2-final_w2*factor, stop=final_w2+final_w2*factor, num=precision):
+    for w1 in np.linspace(start=final_w1-lim, stop=final_w1+lim, num=precision):
+        for w2 in np.linspace(start=final_w2-lim, stop=final_w2+lim, num=precision):
             perceptron.weights[1] = w1
             perceptron.weights[2] = w2
+            weights1.append(w1)
+            weights2.append(w2)
 
             predictions_tmp = []
 
@@ -264,15 +276,36 @@ def train(label, activation_function, epochs, learning_rate, weight_init, bias=T
                 predictions_tmp.append(perceptron.predict(x))
 
             e = mean_squared_error(labels, predictions_tmp)
-
-            weights1.append(w1)
-            weights2.append(w2)
             errors.append(e)
 
     if interactive:
         plot_error_gradient(weights1, weights2, errors, final_w1=final_w2, final_w2=final_w2, final_e=final_e)
 
-    plot_gradient_descend(perceptron, label, activation_function, epochs, learning_rate, learning_rate_decay, weight_init, training_inputs, labels, weights1, weights2, errors)
+    if bias:
+        errors_bias_specific = np.zeros((epochs + 1, precision**2))
+
+        for i, wb in enumerate(perceptron.history_weights[0]):
+            errors_tmp = []
+
+            for w1 in np.linspace(start=final_w1-final_w1*factor, stop=final_w1+final_w1*factor, num=precision):
+                for w2 in np.linspace(start=final_w2-final_w2*factor, stop=final_w2+final_w2*factor, num=precision):
+                    perceptron.weights[0] = wb
+                    perceptron.weights[1] = w1
+                    perceptron.weights[2] = w2
+
+                    predictions_tmp = []
+
+                    for x, y in zip(training_inputs, labels):
+                        predictions_tmp.append(perceptron.predict(x))
+
+                    e = mean_squared_error(labels, predictions_tmp)
+                    errors_tmp.append(e)
+
+            errors_bias_specific[i] = np.array(errors_tmp)
+
+        errors = errors_bias_specific
+
+    plot_gradient_descend(perceptron, label, activation_function, epochs, learning_rate, learning_rate_decay, weight_init, training_inputs, labels, weights1, weights2, errors, bias)
 
 
 # Static activations, Slides 52-62
@@ -297,6 +330,10 @@ train(label='AND', activation_function='sigmoid', epochs=50, learning_rate=0.1, 
 train(label='AND', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=2.5, interactive=False)
 train(label='OR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=2.5, interactive=False)
 train(label='XOR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=2.5, interactive=False)
+train(label='AND', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=2.5, interactive=False, bias=False)
+train(label='AND', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=2.5, interactive=False, bias=False)
+train(label='OR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=2.5, interactive=False, bias=False)
+train(label='XOR', activation_function='sigmoid', epochs=50, learning_rate=0.1, weight_init=2.5, interactive=False, bias=False)
 
 # Static error gradients, Slides 65-73
 # gradient(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0)
