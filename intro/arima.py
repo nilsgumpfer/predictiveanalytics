@@ -8,7 +8,7 @@ df = pd.read_csv('../data/airline-passengers.csv')
 values = df['Passengers'].values
 
 # Model definition
-model = ARIMA(values[:50], order=(1, 1, 1), seasonal_order=(1, 1, 1, 2))
+model = ARIMA(values[:50], order=(1, 2, 2), seasonal_order=(1, 1, 1, 12))
 
 # Model training
 res = model.fit()
