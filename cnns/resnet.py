@@ -8,11 +8,12 @@ model_rn50 = ResNet50(weights='imagenet')
 model_rn101 = ResNet101(weights='imagenet')
 model_rn152 = ResNet152(weights='imagenet')
 
-# img_path = '../data/elephant.jpg'
+img_path = '../data/elephant.jpg'
 # img_path = '../data/rooster.jpg'
 # img_path = '../data/myrooster.jpg'
 # img_path = '../data/snowleopard.jpg'
-img_path = '../data/mysnowleopard.jpg'
+# img_path = '../data/mysnowleopard.jpg'
+# img_path = '../data/mysnowleopard2.jpg'
 # img_path = '../data/leopard.png'
 # img_path = '../data/myleopard.png'
 # img_path = '../data/castlebicycle.jpg'
@@ -21,6 +22,8 @@ img_path = '../data/mysnowleopard.jpg'
 # img_path = '../data/castle.jpg'
 # img_path = '../data/castledark.jpg'
 # img_path = '../data/giraffe.jpg'
+# img_path = '../data/tower.jpg'
+# img_path = '../data/mytower.jpg'
 
 img = image.load_img(img_path, target_size=(224, 224))
 x = image.img_to_array(img)

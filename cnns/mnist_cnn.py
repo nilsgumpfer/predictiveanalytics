@@ -2,18 +2,18 @@ from datetime import datetime
 
 import matplotlib.pyplot as plt
 import numpy as np
-from tensorflow.python.keras import Sequential
-from tensorflow.python.keras.callbacks import TensorBoard
-from tensorflow.python.keras.datasets import mnist, fashion_mnist
-from tensorflow.python.keras.layers import Conv2D, MaxPool2D, GlobalAveragePooling2D, Dense, Dropout
-from tensorflow.python.keras.optimizer_v2.gradient_descent import SGD
-from tensorflow.python.keras.utils.np_utils import to_categorical
-from tensorflow.python.keras.utils.vis_utils import plot_model
+
+from tensorflow.keras import Sequential
+from tensorflow.keras.callbacks import TensorBoard
+from tensorflow.keras.datasets import mnist, fashion_mnist
+from tensorflow.keras.layers import Conv2D, MaxPool2D, GlobalAveragePooling2D, Dense, Dropout
+from tensorflow.keras.optimizers import SGD
+from tensorflow.keras.utils import to_categorical
 
 
 # Load train and test data
-((train_images, train_labels), (val_images, val_labels)), ds_name = mnist.load_data(), 'digits'  # 0.99
-# ((train_images, train_labels), (val_images, val_labels)), ds_name = fashion_mnist.load_data(), 'fashion'  # 0.91
+# ((train_images, train_labels), (val_images, val_labels)), ds_name = mnist.load_data(), 'digits'  # 0.99
+((train_images, train_labels), (val_images, val_labels)), ds_name = fashion_mnist.load_data(), 'fashion'  # 0.91
 
 # Plot 100 training images
 fig, ax = plt.subplots(nrows=10, ncols=10, figsize=(10, 10))
@@ -23,7 +23,7 @@ for i in range(100):
     axs[i].axis('off')
 
 plt.tight_layout()
-plt.savefig('../data/mnist_{}_100.jpg'.format(ds_name))
+plt.savefig('../data/plots/mnist_{}_100.jpg'.format(ds_name))
 plt.close()
 
 # Normalize color values (here: grey-scales)
@@ -42,43 +42,24 @@ val_labels = to_categorical(val_labels)
 nclasses = np.shape(train_labels)[1]
 
 # Define hyperparameters in dictionary for flexible use
-# config = {'conv_layers': 1,  # 2
-#           'conv_filters': 18,  # 64
-#           'conv_kernel_size': 3,
-#           'conv_initializer': 'he_uniform',
-#           'conv_padding': 'same',
-#           'conv_activation_function': 'relu',
-#           'conv_dropout_rate': 0,  # 0.1
-#           'maxpool_stride': 2,
-#           'maxpool_kernel_size': 2,
-#           'fc_layers': 2,
-#           'fc_neurons': 16,  # 100
-#           'fc_activation_function': 'relu',
-#           'fc_initializer': 'he_uniform',
-#           'fc_dropout_rate': 0,  # 0.1
-#           'learning_rate': 0.001,  # 0.01
-#           'momentum': 0.9,
-#           'loss': 'categorical_crossentropy',
-#           'epochs': 2}  # 10
-
-config = {'conv_layers': 2,
-          'conv_filters': 64,
+config = {'conv_layers': 1,
+          'conv_filters': 8,
           'conv_kernel_size': 3,
           'conv_initializer': 'he_uniform',
           'conv_padding': 'same',
           'conv_activation_function': 'relu',
-          'conv_dropout_rate': 0.1,
+          'conv_dropout_rate': 0,
           'maxpool_stride': 2,
           'maxpool_kernel_size': 2,
           'fc_layers': 2,
-          'fc_neurons': 100,
+          'fc_neurons': 16,
           'fc_activation_function': 'relu',
           'fc_initializer': 'he_uniform',
-          'fc_dropout_rate': 0.1,
-          'learning_rate': 0.01,
+          'fc_dropout_rate': 0,
+          'learning_rate': 0.001,
           'momentum': 0.9,
           'loss': 'categorical_crossentropy',
-          'epochs': 10}
+          'epochs': 2}
 
 # Define model architecture
 model = Sequential()
@@ -113,14 +94,6 @@ model.compile(optimizer=SGD(lr=config['learning_rate'], momentum=config['momentu
 
 # Print model architecture
 model.summary()
-
-# Visualize model
-plot_model(model=model,
-           to_file='../data/mnist_cnn.jpg',
-           show_shapes=True,
-           show_layer_names=False,
-           expand_nested=False,
-           dpi=100)
 
 # Tensorboard callback
 tensorboard_callback = TensorBoard(log_dir='tensorboard/mnist_{}_cnn_{}'.format(ds_name, datetime.utcnow().strftime('%Y%m%d_%H-%M-%S')))
