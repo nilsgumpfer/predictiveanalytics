@@ -118,7 +118,7 @@ def train(epochs=20, learning_rate=0.1, preprocessing=None):
     if preprocessing is not None:
         plot_input_variants(inputs, inputs_shifted, inputs_scaled)
 
-    # Select input variant to be used
+    # Select input variant to be used for training
     if preprocessing == 'shift':
         inputs_preprocessed = inputs_shifted
     elif preprocessing == 'scale':
@@ -140,13 +140,15 @@ def train(epochs=20, learning_rate=0.1, preprocessing=None):
 
 
 # First trials, 20 epochs
-train(epochs=20, learning_rate=0.1)
+# train(epochs=20, learning_rate=0.1)
 # train(epochs=20, learning_rate=0.1, preprocessing='scale')
 # train(epochs=20, learning_rate=0.1, preprocessing='shift')
 
-# Further trials, more epochs
+# Further trials, more epochs / different learning rates
 # train(epochs=100, learning_rate=0.1)
 # train(epochs=100, learning_rate=0.05)
 # train(epochs=200, learning_rate=0.05)
 # train(epochs=100, learning_rate=0.1, preprocessing='scale')
+# train(epochs=200, learning_rate=0.1, preprocessing='scale')
 # train(epochs=100, learning_rate=0.1, preprocessing='shift')
+# train(epochs=200, learning_rate=0.1, preprocessing='shift')
