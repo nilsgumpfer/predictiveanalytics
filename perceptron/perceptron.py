@@ -111,7 +111,6 @@ def generate_data(n, label):
 class Perceptron(object):
     def __init__(self, no_of_inputs=2, epochs=200, learning_rate=0.01, learning_rate_decay=0.0, activation_function='binary', bias=True, weight_init=0.0):
         self.history_predictions = []
-        # self.history_weights = np.zeros((no_of_inputs, epochs + 1))
         self.history_weights = np.zeros((no_of_inputs + 1, epochs + 1))
         self.epochs = epochs
         self.learning_rate = learning_rate
@@ -329,6 +328,7 @@ def train(label, activation_function, epochs, learning_rate, weight_init, bias=T
 # train(label='AND', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=0.0, interactive=True, precision=50, padding=2)
 # train(label='OR', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=0.0, interactive=True, precision=50, padding=2)
 # train(label='XOR', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=0.0, interactive=True, precision=50, padding=2)
+# train(label='XOR', activation_function='relu', epochs=10, learning_rate=0.001, weight_init=0.0, interactive=True, precision=50, padding=1)
 
 # Advanced examples:
 # train(label='AND', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=0, interactive=False, precision=50, padding=0.5)
