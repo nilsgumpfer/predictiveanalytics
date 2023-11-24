@@ -8,7 +8,8 @@ model_rn50 = ResNet50(weights='imagenet')
 model_rn101 = ResNet101(weights='imagenet')
 model_rn152 = ResNet152(weights='imagenet')
 
-img_path = '../data/elephant.jpg'
+# img_path = '../data/elephant.jpg'
+img_path = '../data/myelephant.jpg'
 # img_path = '../data/rooster.jpg'
 # img_path = '../data/myrooster.jpg'
 # img_path = '../data/snowleopard.jpg'

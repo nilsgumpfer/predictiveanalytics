@@ -57,7 +57,7 @@ config = {'conv_layers': 1,
           'fc_initializer': 'he_uniform',
           'fc_dropout_rate': 0,
           'learning_rate': 0.001,
-          'momentum': 0.9,
+          'momentum': 0.0,
           'loss': 'categorical_crossentropy',
           'epochs': 2}
 

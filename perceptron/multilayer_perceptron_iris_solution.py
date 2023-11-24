@@ -140,7 +140,7 @@ def train(epochs=20, learning_rate=0.1, preprocessing=None):
 
 
 # First trials, 20 epochs
-# train(epochs=20, learning_rate=0.1)
+train(epochs=20, learning_rate=0.1)
 # train(epochs=20, learning_rate=0.1, preprocessing='scale')
 # train(epochs=20, learning_rate=0.1, preprocessing='shift')
 
