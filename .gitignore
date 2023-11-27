@@ -134,3 +134,4 @@ dmypy.json
 # Own stuff
 /perceptron/plots/frames
 /cnns/tensorboard/
+/cnns/models/
