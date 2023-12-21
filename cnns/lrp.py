@@ -11,16 +11,23 @@ model = VGG16(weights='imagenet')
 model.layers[-1].activation = None
 
 # Load example image
-img, x = load_image('../data/elephant.jpg')
+img, x = load_image('../data/castle.jpg')
 
 # Calculate relevancemaps
-R1 = calculate_relevancemap('lrpz_epsilon_0_1_std_x', np.array(x), model)
-R2 = calculate_relevancemap('lrpsign_epsilon_0_1_std_x', np.array(x), model)
+R1 = calculate_relevancemap('gradient', np.array(x), model, neuron_selection=None)  # TODO: adjust neuron selection
+R2 = calculate_relevancemap('lrpz_epsilon_0_1_std_x', np.array(x), model, neuron_selection=None)  # TODO: adjust neuron selection
+R3 = calculate_relevancemap('lrpsign_epsilon_0_1_std_x', np.array(x), model, neuron_selection=None)  # TODO: adjust neuron selection
 
 # Visualize heatmaps
-fig, axs = plt.subplots(ncols=3, nrows=1, figsize=(18, 12))
+fig, axs = plt.subplots(ncols=4, nrows=1, figsize=(18, 12))
 axs[0].imshow(img)
 axs[1].matshow(aggregate_and_normalize_relevancemap_rgb(R1), cmap='seismic', clim=(-1, 1))
+axs[1].set_title('Gradient')
 axs[2].matshow(aggregate_and_normalize_relevancemap_rgb(R2), cmap='seismic', clim=(-1, 1))
+axs[2].set_title('LRP-z')
+axs[3].matshow(aggregate_and_normalize_relevancemap_rgb(R3), cmap='seismic', clim=(-1, 1))
+axs[3].set_title('LRP-SIGN')
+
+plt.tight_layout()
 
 plt.show()

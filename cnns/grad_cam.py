@@ -95,18 +95,6 @@ def main(cmap_name='gist_heat', alpha=2.0):
     last_conv_layer_name = 'conv5_block3_out'
     # img_path = '../data/rooster.jpg'
     # img_path = '../data/myrooster.jpg'
-    # img_path = '../data/myrooster.jpg'
-    # img_path = '../data/snowleopard.jpg'
-    # img_path = '../data/mysnowleopard.jpg'
-    # img_path = '../data/tigershark.jpg'
-    img_path = '../data/mytigershark.jpg'
-    # img_path = '../data/leopard.png'
-    # img_path = '../data/myleopard.png'
-    # img_path = '../data/tower.jpg'
-    # img_path = '../data/castle.jpg'
-    # img_path = '../data/castledark.jpg'
-    # img_path = '../data/elephant.jpg'
-    # img_path = '../data/giraffe.jpg'
     cam_path = '{}_cam.jpg'.format(img_path.rsplit('.', maxsplit=1)[0]).replace('data', 'data/plots')
 
     # Load and preprocess image
@@ -136,5 +124,5 @@ def main(cmap_name='gist_heat', alpha=2.0):
     save_and_display_gradcam(img_path, heatmap, cam_path, cmap_name, alpha)
 
 
-# os.makedirs('../data/plots', exist_ok=True)
-# main()
+os.makedirs('../data/plots', exist_ok=True)
+main()
