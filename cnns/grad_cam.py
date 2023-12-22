@@ -93,8 +93,9 @@ def main(cmap_name='gist_heat', alpha=2.0):
 
     # Parameters
     last_conv_layer_name = 'conv5_block3_out'
-    # img_path = '../data/rooster.jpg'
+    img_path = '../data/rooster.jpg'
     # img_path = '../data/myrooster.jpg'
+    # img_path = '../data/castlebicycle.jpg'
     cam_path = '{}_cam.jpg'.format(img_path.rsplit('.', maxsplit=1)[0]).replace('data', 'data/plots')
 
     # Load and preprocess image
