@@ -86,17 +86,16 @@ def save_and_display_gradcam(img_path, heatmap, cam_path, cmap_name, alpha):
     superimposed_img.save(cam_path)
 
 
-def main(cmap_name='gist_heat', alpha=2.0):
+def main(img_path, cmap_name='gist_heat', alpha=2.0, idx=None):
+    os.makedirs('../data/plots', exist_ok=True)
+
     # Load model
     model = ResNet152(weights='imagenet')
-    model.summary()
+    # model.summary()
 
     # Parameters
     last_conv_layer_name = 'conv5_block3_out'
-    img_path = '../data/rooster.jpg'
-    # img_path = '../data/myrooster.jpg'
-    # img_path = '../data/castlebicycle.jpg'
-    cam_path = '{}_cam.jpg'.format(img_path.rsplit('.', maxsplit=1)[0]).replace('data', 'data/plots')
+    cam_path = '{}_gradcam_{}.jpg'.format(img_path.rsplit('.', maxsplit=1)[0], idx).replace('data', 'data/plots')
 
     # Load and preprocess image
     img = image.load_img(img_path, target_size=(224, 224))
@@ -108,6 +107,8 @@ def main(cmap_name='gist_heat', alpha=2.0):
     pred = model.predict(x)
     d_pred = decode_predictions(pred, top=3)[0]
     i_pred = pred[0].argsort()[-3:][::-1]
+
+    print('\nPredicting on input: ', img_path)
     for d, i in zip(d_pred, i_pred):
         print('name={}, probability={:.2f}, idx={}'.format(d[1], d[2], i))
 
@@ -115,7 +116,7 @@ def main(cmap_name='gist_heat', alpha=2.0):
     model.layers[-1].activation = None
 
     # Generate class activation heatmap (CAM)
-    heatmap = make_gradcam_heatmap(x, model, last_conv_layer_name, idx=None)  # TODO: adapt class index to be explained
+    heatmap = make_gradcam_heatmap(x, model, last_conv_layer_name, idx=idx)  # TODO: adapt class index to be explained
 
     # Display heatmap
     # plt.matshow(heatmap, cmap=cmap_name)
@@ -125,5 +126,7 @@ def main(cmap_name='gist_heat', alpha=2.0):
     save_and_display_gradcam(img_path, heatmap, cam_path, cmap_name, alpha)
 
 
-os.makedirs('../data/plots', exist_ok=True)
-main()
+main('../data/rooster.jpg', 'jet')
+main('../data/myrooster.jpg', 'jet')
+main('../data/castlebicycle.jpg', 'jet', idx=483)
+main('../data/castlebicycle.jpg', 'jet',idx=671)
