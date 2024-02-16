@@ -171,5 +171,5 @@ def save_and_display_gradcam(img_path, heatmap, cam_path, cmap_name, alpha):
 # main(img_path='../data/hyaene.jpg', explain_class_idx=1)
 # main(img_path='../data/hyaene2.jpg', explain_class_idx=0)
 # main(img_path='../data/hyaene2.jpg', explain_class_idx=1)
-main(img_path='../data/hyaene3.jpg', explain_class_idx=0)
-main(img_path='../data/hyaene3.jpg', explain_class_idx=1)
+main(img_path='../data/hyaene3.png', explain_class_idx=0)
+main(img_path='../data/hyaene3.png', explain_class_idx=1)
