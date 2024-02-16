@@ -2,6 +2,7 @@ import matplotlib.cm as cm
 import numpy as np
 import tensorflow as tf
 from PIL import Image, ImageOps
+from PIL.Image import Resampling
 from keras import Model
 from keras.layers import deserialize
 from keras.models import load_model, clone_model
@@ -166,5 +167,9 @@ def save_and_display_gradcam(img_path, heatmap, cam_path, cmap_name, alpha):
     superimposed_img.save(cam_path)
 
 
-main(img_path='../data/hyaene.jpg', explain_class_idx=0)
-main(img_path='../data/hyaene.jpg', explain_class_idx=1)
+# main(img_path='../data/hyaene.jpg', explain_class_idx=0)
+# main(img_path='../data/hyaene.jpg', explain_class_idx=1)
+# main(img_path='../data/hyaene2.jpg', explain_class_idx=0)
+# main(img_path='../data/hyaene2.jpg', explain_class_idx=1)
+main(img_path='../data/hyaene3.jpg', explain_class_idx=0)
+main(img_path='../data/hyaene3.jpg', explain_class_idx=1)
