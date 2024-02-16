@@ -13,10 +13,10 @@ def main(img_path, explain_class_idx=None):
     np.set_printoptions(suppress=True)
 
     # Load the model
-    model = load_model("./models/keras_model_100.h5", compile=False)
+    model = load_model("models/keras_model.h5", compile=False)
 
     # Load the labels
-    class_names = open("./models/labels.txt", "r").readlines()
+    class_names = open("./models/labels.txt", "r").read().split('\n')[:-1]
 
     # Create the array of the right shape to feed into the keras model
     # The 'length' or number of images you can put into the array is
