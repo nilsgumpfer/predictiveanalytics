@@ -66,6 +66,10 @@ def main(img_path, explain_class_idx=None):
     model3.layers[-2].set_weights(dense_layers[0].get_weights())
     model3.layers[-1].set_weights(dense_layers[1].get_weights())
 
+    for l in model3.layers:
+        print(l.name)
+    exit()
+
     # Model prediction
     prediction = model3.predict(data)
     idx_pred = np.argmax(prediction)
