@@ -270,6 +270,7 @@ def train(label, activation_function, epochs, learning_rate, weight_init, bias=T
     w2_low = np.min([weight_init, np.min(perceptron.history_weights[2])]) - padding
     w2_high = np.max([weight_init, np.max(perceptron.history_weights[2])]) + padding
 
+    print('Calculating error surface..')
     for w1 in np.linspace(start=w1_low, stop=w1_high, num=precision):
         for w2 in np.linspace(start=w2_low, stop=w2_high, num=precision):
             perceptron.weights[1] = w1
@@ -313,8 +314,10 @@ def train(label, activation_function, epochs, learning_rate, weight_init, bias=T
         errors = errors_bias_specific
 
     if not interactive:
+        print('Plotting gradient descent..')
         plot_gradient_descend(perceptron, label, activation_function, epochs, learning_rate, learning_rate_decay, weight_init, weights1, weights2, errors, bias)
 
+    print('Plotting training data and activations over time..')
     plot_training_data_and_activations_over_time(perceptron, label, activation_function, epochs, learning_rate, learning_rate_decay, weight_init, training_inputs, labels, bias)
 
 

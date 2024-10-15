@@ -13,6 +13,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.applications import ResNet152
+from tensorflow.keras.applications import VGG16
 from tensorflow.keras.applications.resnet import preprocess_input, decode_predictions
 from tensorflow.keras.preprocessing import image
 
@@ -86,16 +87,13 @@ def save_and_display_gradcam(img_path, heatmap, cam_path, cmap_name, alpha):
     superimposed_img.save(cam_path)
 
 
-def main(img_path, cmap_name='gist_heat', alpha=2.0, idx=None):
+def main(img_path, cmap_name='gist_heat', alpha=2.0, idx=None, last_conv_layer_name='conv5_block3_out'):
     os.makedirs('../data/plots', exist_ok=True)
 
     # Load model
     model = ResNet152(weights='imagenet')
+    # model = VGG16(weights='imagenet')
     # model.summary()
-
-    # Parameters
-    last_conv_layer_name = 'conv5_block3_out'
-    cam_path = '{}_gradcam_{}.jpg'.format(img_path.rsplit('.', maxsplit=1)[0], idx).replace('data', 'data/plots')
 
     # Load and preprocess image
     img = image.load_img(img_path, target_size=(224, 224))
@@ -112,6 +110,13 @@ def main(img_path, cmap_name='gist_heat', alpha=2.0, idx=None):
     for d, i in zip(d_pred, i_pred):
         print('name={}, probability={:.2f}, idx={}'.format(d[1], d[2], i))
 
+    if idx is None:
+        idx = i_pred[0]
+    # TODO: tmp!
+
+    # Parameters
+    cam_path = '{}_gradcam_{}.jpg'.format(img_path.rsplit('.', maxsplit=1)[0], d_pred[0][1]).replace('data', 'data/plots')
+
     # Remove last layer's softmax activation (for the explanation we need the raw values!)
     model.layers[-1].activation = None
 
@@ -126,7 +131,12 @@ def main(img_path, cmap_name='gist_heat', alpha=2.0, idx=None):
     save_and_display_gradcam(img_path, heatmap, cam_path, cmap_name, alpha)
 
 
-main('../data/rooster.jpg', 'jet')
-main('../data/myrooster.jpg', 'jet')
-main('../data/castlebicycle.jpg', 'jet', idx=483)
-main('../data/castlebicycle.jpg', 'jet',idx=671)
+# main('/home/nils/PyCharmProjects/tim6/data/applesandco/test/green1.png', 'jet', last_conv_layer_name='block5_conv3')
+# main('/home/nils/PyCharmProjects/tim6/data/applesandco/test/red1.jpg', 'jet', last_conv_layer_name='block5_conv3')
+# main('/home/nils/PyCharmProjects/tim6/data/applesandco/test/tomato1.jpg', 'jet', last_conv_layer_name='block5_conv3')
+# main('/home/nils/PyCharmProjects/tim6/data/applesandco/test/rosehip1.jpg', 'jet', last_conv_layer_name='block5_conv3')
+main('/home/nils/PyCharmProjects/tim6/data/applesandco/test/tomato2.png', 'jet', last_conv_layer_name='block5_conv3')
+# main('../data/rooster.jpg', 'jet')
+# main('../data/myrooster.jpg', 'jet')
+# main('../data/castlebicycle.jpg', 'jet', idx=483)
+# main('../data/castlebicycle.jpg', 'jet',idx=671)

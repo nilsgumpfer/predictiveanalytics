@@ -9,7 +9,7 @@ from tensorflow.keras.datasets import mnist, fashion_mnist
 from tensorflow.keras.layers import Conv2D, MaxPool2D, GlobalAveragePooling2D, Dense, Dropout
 from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.utils import to_categorical
-
+from tensorflow.keras.callbacks import ModelCheckpoint
 
 # Load train and test data
 # ((train_images, train_labels), (val_images, val_labels)), ds_name = mnist.load_data(), 'digits'  # 0.99
@@ -96,10 +96,13 @@ model.compile(optimizer=SGD(lr=config['learning_rate'], momentum=config['momentu
 model.summary()
 
 # Tensorboard callback
-tensorboard_callback = TensorBoard(log_dir='tensorboard/mnist_{}_cnn_{}'.format(ds_name, datetime.utcnow().strftime('%Y%m%d_%H-%M-%S')))
+tensorboard_callback = TensorBoard(log_dir='./tensorboard/mnist_{}_cnn_{}'.format(ds_name, datetime.utcnow().strftime('%Y%m%d_%H-%M-%S')), histogram_freq=1)
+checkpoint_callback = ModelCheckpoint(filepath='./models/mnist_{}_cnn.h5'.format(ds_name), monitor='val_accuracy', mode='max', save_best_only=True)
 
+print(np.shape(train_images))
+print(np.shape(train_labels))
 # Train model
-model.fit(x=train_images, y=train_labels, epochs=config['epochs'], validation_data=(val_images, val_labels), callbacks=[tensorboard_callback])
+model.fit(x=train_images, y=train_labels, epochs=config['epochs'], validation_data=(val_images, val_labels), callbacks=[tensorboard_callback, checkpoint_callback])
 
 # Evaluate model
 val_loss, val_acc = model.evaluate(val_images, val_labels)
