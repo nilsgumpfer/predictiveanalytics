@@ -78,11 +78,8 @@ def train_model(config, train_images, train_labels, val_images, val_labels, ncla
     model.summary()
 
     # Tensorboard callback
-    tensorboard_callback = TensorBoard(
-        log_dir='./tensorboard/mnist_{}_cnn_{}'.format(ds_name, datetime.utcnow().strftime('%Y%m%d_%H-%M-%S')),
-        histogram_freq=1)
-    checkpoint_callback = ModelCheckpoint(filepath='./models/mnist_{}_cnn.h5'.format(ds_name), monitor='val_accuracy',
-                                          mode='max', save_best_only=True)
+    tensorboard_callback = TensorBoard(log_dir='./tensorboard/mnist_{}_cnn_{}'.format(ds_name, datetime.utcnow().strftime('%Y%m%d_%H-%M-%S')), histogram_freq=1)
+    checkpoint_callback = ModelCheckpoint(filepath='./models/mnist_{}_cnn.h5'.format(ds_name), monitor='val_accuracy', mode='max', save_best_only=True)
 
     # Train model
     model.fit(x=train_images, y=train_labels, epochs=config['epochs'], validation_data=(val_images, val_labels),
@@ -112,16 +109,20 @@ def main(config, train=False):
     # Calculate relevancemaps
     i = np.random.randint(low=0, high=len(val_images))
     x = val_images[i]
-    R1 = calculate_relevancemap('gradient_x_sign_mu_0_5', np.array(x), model)
+    R1 = calculate_relevancemap('smoothgrad_x_sign', np.array(x), model, mu=0.5)
     R2 = calculate_relevancemap('grad_cam', np.array(x), model, last_conv_layer_name='conv2d_1')
+    R1_n = normalize_heatmap(R1)
+    R2_n = normalize_heatmap(R2)
+    R1_n[R1_n < 0] = 0
+    R2_n[R2_n < 0] = 0
 
     # Visualize heatmaps
     fig, axs = plt.subplots(ncols=3, nrows=1, figsize=(12, 4))
     axs[0].imshow(x, cmap='gist_gray_r', clim=(-1, 1))
     axs[0].set_title('input')
-    axs[1].matshow(normalize_heatmap(R1), cmap='seismic', clim=(-1, 1))
-    axs[1].set_title('Gradient x SIGN')
-    axs[2].matshow(normalize_heatmap(R2), cmap='seismic', clim=(-1, 1))
+    axs[1].matshow(R1_n, cmap='seismic', clim=(-1, 1))
+    axs[1].set_title('SmoothGrad x SIGN')
+    axs[2].matshow(R2_n, cmap='seismic', clim=(-1, 1))
     axs[2].set_title('Grad CAM')
 
     plt.show()
@@ -139,15 +140,16 @@ if __name__ == '__main__':
               'maxpool_stride': 2,
               'maxpool_kernel_size': 2,
               'fc_layers': 2,
-              'fc_neurons': 16,
+              'fc_neurons': 32,
               'fc_activation_function': 'relu',
               'fc_initializer': 'he_uniform',
-              'fc_dropout_rate': 0.1,
+              'fc_dropout_rate': 0.25,
               'learning_rate': 0.001,
               'momentum': 0.0,
               'loss': 'categorical_crossentropy',
-              'epochs': 5}
+              'epochs': 50}
 
-    main(params, train=False)
+    while(True):
+        main(params, train=False)
 
 # test
