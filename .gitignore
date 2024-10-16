@@ -132,7 +132,7 @@ dmypy.json
 .idea
 
 # Own stuff
-/perceptron/plots/frames
-/cnns/tensorboard/
+/02_perceptron/plots/frames
+/03_cnns/tensorboard/
 
 *.h5

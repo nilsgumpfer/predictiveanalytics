@@ -171,7 +171,7 @@ class Perceptron(object):
         if self.activation_function == 'binary':
             return 1
             # Mathematically, the derivative of the binary activation function is always 0. The initial definition
-            # of the perceptron by Rosenblatt did not consider derivatives as used for other activation functions.
+            # of the 02_perceptron by Rosenblatt did not consider derivatives as used for other activation functions.
             # Therefore, we simply return 1 in this case to enable a valid weight update.
         if self.activation_function == 'identity':
             return 1
