@@ -99,8 +99,6 @@ model.summary()
 tensorboard_callback = TensorBoard(log_dir='./tensorboard/mnist_{}_cnn_{}'.format(ds_name, datetime.utcnow().strftime('%Y%m%d_%H-%M-%S')), histogram_freq=1)
 checkpoint_callback = ModelCheckpoint(filepath='./models/mnist_{}_cnn.h5'.format(ds_name), monitor='val_accuracy', mode='max', save_best_only=True)
 
-print(np.shape(train_images))
-print(np.shape(train_labels))
 # Train model
 model.fit(x=train_images, y=train_labels, epochs=config['epochs'], validation_data=(val_images, val_labels), callbacks=[tensorboard_callback, checkpoint_callback])
 

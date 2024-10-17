@@ -36,21 +36,40 @@ def prepare_data():
     return train_images, train_labels, val_images, val_labels, nclasses, ds_name
 
 
-def train_model(config, train_images, train_labels, val_images, val_labels, nclasses, ds_name):
+def train_model():
+    # Define hyperparameters
+    config = {'conv_layers': 3,
+              'conv_filters': 32,
+              'conv_kernel_size': 3,
+              'conv_initializer': 'he_uniform',
+              'conv_padding': 'same',
+              'conv_activation_function': 'relu',
+              'conv_dropout_rate': 0.1,
+              'maxpool_stride': 2,
+              'maxpool_kernel_size': 2,
+              'fc_layers': 2,
+              'fc_neurons': 32,
+              'fc_activation_function': 'relu',
+              'fc_initializer': 'he_uniform',
+              'fc_dropout_rate': 0.25,
+              'learning_rate': 0.001,
+              'momentum': 0.0,
+              'loss': 'categorical_crossentropy',
+              'epochs': 5}
+
+    # Preprocess and load data
+    train_images, train_labels, val_images, val_labels, nclasses, ds_name = prepare_data()
+
     # Define model architecture
     model = Sequential()
 
     # First convolutional and pooling layer
-    model.add(Conv2D(input_shape=(28, 28, 1), filters=config['conv_filters'], kernel_size=config['conv_kernel_size'],
-                     padding=config['conv_padding'], activation=config['conv_activation_function'],
-                     kernel_initializer=config['conv_initializer']))
+    model.add(Conv2D(input_shape=(28, 28, 1), filters=config['conv_filters'], kernel_size=config['conv_kernel_size'], padding=config['conv_padding'], activation=config['conv_activation_function'], kernel_initializer=config['conv_initializer']))
     model.add(MaxPool2D(strides=config['maxpool_stride'], pool_size=config['maxpool_kernel_size']))
 
     # Convolutional layers
     for i in range(config['conv_layers']):
-        model.add(Conv2D(filters=config['conv_filters'], kernel_size=config['conv_kernel_size'],
-                         padding=config['conv_padding'], activation=config['conv_activation_function'],
-                         kernel_initializer=config['conv_initializer']))
+        model.add(Conv2D(filters=config['conv_filters'], kernel_size=config['conv_kernel_size'], padding=config['conv_padding'], activation=config['conv_activation_function'], kernel_initializer=config['conv_initializer']))
         model.add(MaxPool2D(strides=config['maxpool_stride'], pool_size=config['maxpool_kernel_size']))
 
         if config['conv_dropout_rate'] > 0.0:
@@ -61,8 +80,7 @@ def train_model(config, train_images, train_labels, val_images, val_labels, ncla
 
     # Dense layers
     for i in range(config['fc_layers']):
-        model.add(Dense(units=config['fc_neurons'], activation=config['fc_activation_function'],
-                        kernel_initializer=config['fc_initializer']))
+        model.add(Dense(units=config['fc_neurons'], activation=config['fc_activation_function'], kernel_initializer=config['fc_initializer']))
 
         if config['fc_dropout_rate'] > 0.0:
             model.add(Dropout(config['fc_dropout_rate']))
@@ -71,8 +89,7 @@ def train_model(config, train_images, train_labels, val_images, val_labels, ncla
     model.add(Dense(units=nclasses, activation='softmax', kernel_initializer=config['fc_initializer']))
 
     # Compile model
-    model.compile(optimizer=SGD(lr=config['learning_rate'], momentum=config['momentum']), loss=config['loss'],
-                  metrics=['accuracy'])
+    model.compile(optimizer=SGD(lr=config['learning_rate'], momentum=config['momentum']), loss=config['loss'], metrics=['accuracy'])
 
     # Print model architecture
     model.summary()
@@ -82,8 +99,7 @@ def train_model(config, train_images, train_labels, val_images, val_labels, ncla
     checkpoint_callback = ModelCheckpoint(filepath='./models/mnist_{}_cnn.h5'.format(ds_name), monitor='val_accuracy', mode='max', save_best_only=True)
 
     # Train model
-    model.fit(x=train_images, y=train_labels, epochs=config['epochs'], validation_data=(val_images, val_labels),
-              callbacks=[tensorboard_callback, checkpoint_callback])
+    model.fit(x=train_images, y=train_labels, epochs=config['epochs'], validation_data=(val_images, val_labels), callbacks=[tensorboard_callback, checkpoint_callback])
 
     # Evaluate model
     val_loss, val_acc = model.evaluate(val_images, val_labels)
@@ -92,16 +108,12 @@ def train_model(config, train_images, train_labels, val_images, val_labels, ncla
     return model
 
 
-def main(config, train=False):
+def explain():
     # Load data
     train_images, train_labels, val_images, val_labels, nclasses, ds_name = prepare_data()
 
-    if train:
-        # Train model
-        model = train_model(config, train_images, train_labels, val_images, val_labels, nclasses, ds_name)
-    else:
-        # Load model
-        model = load_model('./models/mnist_fashion_cnn.h5')
+    # Load model
+    model = load_model('./models/mnist_fashion_cnn.h5')
 
     # Remove softmax
     model.layers[-1].activation = None
@@ -124,32 +136,9 @@ def main(config, train=False):
     axs[1].set_title('SmoothGrad x SIGN')
     axs[2].matshow(R2_n, cmap='seismic', clim=(-1, 1))
     axs[2].set_title('Grad CAM')
-
     plt.show()
 
 
 if __name__ == '__main__':
-    # Define hyperparameters
-    params = {'conv_layers': 3,
-              'conv_filters': 32,
-              'conv_kernel_size': 3,
-              'conv_initializer': 'he_uniform',
-              'conv_padding': 'same',
-              'conv_activation_function': 'relu',
-              'conv_dropout_rate': 0.1,
-              'maxpool_stride': 2,
-              'maxpool_kernel_size': 2,
-              'fc_layers': 2,
-              'fc_neurons': 32,
-              'fc_activation_function': 'relu',
-              'fc_initializer': 'he_uniform',
-              'fc_dropout_rate': 0.25,
-              'learning_rate': 0.001,
-              'momentum': 0.0,
-              'loss': 'categorical_crossentropy',
-              'epochs': 50}
-
-    while(True):
-        main(params, train=False)
-
-# test
+    train_model()
+    explain()

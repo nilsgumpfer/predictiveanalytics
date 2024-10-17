@@ -133,6 +133,6 @@ dmypy.json
 
 # Own stuff
 /02_perceptron/plots/frames
-/03_cnns/tensorboard/
+/03_deeplearning/tensorboard/
 
 *.h5
