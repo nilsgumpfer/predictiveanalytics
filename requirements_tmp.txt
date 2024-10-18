@@ -1,0 +1,8 @@
+tensorflow
+pandas
+matplotlib
+scikit-learn
+statsmodels
+imageio
+numpy
+scipy
