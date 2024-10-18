@@ -134,6 +134,6 @@ dmypy.json
 # Own stuff
 /02_perceptron/plots/frames
 /03_deeplearning/tensorboard/
-#/04_xai/tensorboard/
+/04_xai/tensorboard/
 
 *.h5

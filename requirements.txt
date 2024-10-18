@@ -7,5 +7,3 @@ imageio~=2.31.5
 numpy~=1.26.0
 signxai~=1.1.8.2
 scipy~=1.11
-dnnviewer~=0.1.0
-dash-bootstrap-components~=0.13.1
