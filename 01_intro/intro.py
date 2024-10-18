@@ -1,5 +1,8 @@
 import numpy as np
 
+from utils.util import calculatesomething
+
+
 def numpy_examples():
     mylist = [[1, 2, 3],
               [1, 2, 3]]
@@ -65,6 +68,9 @@ def main():
     for i, (x, y) in enumerate(zip(c, g)):
         print(i, x, y)
 
+    r = calculatesomething(123)
+    print(r)
+
 
 def myfunction(v, exponent=2):
     def greeting(name_to_greet):
@@ -75,6 +81,8 @@ def myfunction(v, exponent=2):
     print("Function call!", v**exponent)
 
 
+
+
 if __name__ == '__main__':
-    # main()
-    numpy_examples()
+    main()
+    # numpy_examples()
