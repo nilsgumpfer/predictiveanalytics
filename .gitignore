@@ -137,3 +137,4 @@ dmypy.json
 /04_xai/tensorboard/
 
 *.h5
+/data/plots/
