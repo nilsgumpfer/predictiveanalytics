@@ -335,7 +335,7 @@ def train(label, activation_function, epochs, learning_rate, weight_init, bias=T
 
 # Advanced examples:
 # train(label='AND', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=0, interactive=False, precision=50, padding=0.5)
-train(label='OR', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=0, interactive=False, precision=50, padding=0.5)
+# train(label='OR', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=0, interactive=False, precision=50, padding=0.5)
 # train(label='AND', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=2.5, interactive=False, precision=50, padding=0.5)
 # train(label='AND', activation_function='sigmoid', epochs=100, learning_rate=0.01, weight_init=0, interactive=False, precision=50, padding=0.5)
 # train(label='AND', activation_function='sigmoid', epochs=100, learning_rate=0.01, weight_init=2.5, interactive=False, precision=50, padding=0.5)
