@@ -66,7 +66,17 @@ def main(thresh, show_masks=False):
     # Print result
     print('Threshold: {}, Accuracy: {:.2f}%'.format(thresh, acc))
 
+    return acc
+
 
 if __name__ == '__main__':
-    main(thresh=50, show_masks=False)
+    accuracies = []
+    thresholds = []
+    for t in np.arange(start=0, stop=255, step=10):
+        a = main(thresh=t, show_masks=False)
+        accuracies.append(a)
+        thresholds.append(t)
+
+    plt.plot(thresholds, accuracies)
+    plt.show()
 
