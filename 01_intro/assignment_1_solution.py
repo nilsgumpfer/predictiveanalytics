@@ -31,8 +31,8 @@ def aufgabe3():
 
     print(df)
 
-    df.to_csv('../data/mydf.csv')
-    df2 = pd.read_csv('../data/mydf.csv', index_col=0)
+    df.to_csv('../data/mydf.csv', index=False)
+    df2 = pd.read_csv('../data/mydf.csv')
 
     print(df2)
 
@@ -52,7 +52,7 @@ def aufgabe4():
     # plt.show()
     plt.savefig('../data/plots/myplot.pdf')
 
-aufgabe1()
+# aufgabe1()
 # aufgabe2()
-# aufgabe3()
+aufgabe3()
 # aufgabe4()
