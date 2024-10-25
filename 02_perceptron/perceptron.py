@@ -325,7 +325,7 @@ def train(label, activation_function, epochs, learning_rate, weight_init, bias=T
 # train(label='AND', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0, interactive=True, precision=150, padding=0.2)
 # train(label='OR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0, interactive=True, precision=150, padding=0.2)
 # train(label='XOR', activation_function='binary', epochs=50, learning_rate=0.001, weight_init=0.0, interactive=True, precision=150, padding=0.2)
-# train(label='AND', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=0.0, interactive=True, precision=50, padding=2)
+train(label='AND', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=0.0, interactive=True, precision=50, padding=2)
 # train(label='OR', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=0.0, interactive=True, precision=50, padding=2)
 # train(label='XOR', activation_function='sigmoid', epochs=100, learning_rate=0.1, weight_init=0.0, interactive=True, precision=50, padding=2)
 # train(label='AND', activation_function='relu', epochs=50, learning_rate=0.01, weight_init=0.0, interactive=True, precision=50, padding=2)

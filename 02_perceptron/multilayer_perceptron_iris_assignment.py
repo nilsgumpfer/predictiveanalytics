@@ -64,6 +64,7 @@ def train():
 
     # Load iris dataset
     iris = load_iris()
+    print(iris)
     inputs = iris['data']
     labels = iris['target']
 
