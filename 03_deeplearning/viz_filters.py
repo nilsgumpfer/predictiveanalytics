@@ -14,7 +14,7 @@ layer_indices = np.arange(start=1, stop=len(model.layers))
 outputs = [model.layers[i].output for i in layer_indices]
 model = Model(inputs=model.inputs, outputs=outputs)
 
-img = load_img('../data/castle.jpg', target_size=(224, 224))
+img = load_img('../data/elephant.jpg', target_size=(224, 224))
 img = img_to_array(img)
 img = expand_dims(img, axis=0)
 img = preprocess_input(img)
