@@ -1,17 +1,14 @@
 # visualize feature maps output from each block in the vgg model
-from keras.applications.resnet import ResNet152
+import matplotlib.pyplot as plt
+import numpy as np
 from keras.applications.vgg16 import VGG16
 from keras.applications.vgg16 import preprocess_input
-from keras.preprocessing.image import load_img
-from keras.preprocessing.image import img_to_array
 from keras.models import Model
-import matplotlib.pyplot as plt
+from keras.preprocessing.image import img_to_array
+from keras.preprocessing.image import load_img
 from numpy import expand_dims
-import numpy as np
-
 
 model = VGG16()
-# model = ResNet152()
 print(model.summary())
 layer_indices = np.arange(start=1, stop=len(model.layers))
 outputs = [model.layers[i].output for i in layer_indices]
@@ -48,7 +45,7 @@ for idx, feature_maps in zip(layer_indices, all_layers_feature_maps):
                 for c in range(square):
                     filter_to_viz = np.array(kernel[:, :, :, f]).mean(axis=2)
 
-                    axs[r][c].imshow(filter_to_viz, cmap='gray')
+                    axs[r][c].imshow(filter_to_viz, cmap='grey')
                     axs[r][c].axis('off')
                     f += 1
 
@@ -64,7 +61,7 @@ for idx, feature_maps in zip(layer_indices, all_layers_feature_maps):
             f = 0
             for r in range(square):
                 for c in range(square):
-                    axs[r][c].imshow(feature_maps[0, :, :, f], cmap='gray')
+                    axs[r][c].imshow(feature_maps[0, :, :, f], cmap='grey')
                     axs[r][c].axis('off')
                     f += 1
 
