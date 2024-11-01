@@ -1,4 +1,6 @@
 # visualize feature maps output from each block in the vgg model
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
 from keras.applications.vgg16 import VGG16
@@ -13,6 +15,8 @@ print(model.summary())
 layer_indices = np.arange(start=1, stop=len(model.layers))
 outputs = [model.layers[i].output for i in layer_indices]
 model = Model(inputs=model.inputs, outputs=outputs)
+
+os.makedirs('../data/plots/', exist_ok=True)
 
 img = load_img('../data/elephant.jpg', target_size=(224, 224))
 img = img_to_array(img)
