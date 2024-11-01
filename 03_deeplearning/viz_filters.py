@@ -32,13 +32,12 @@ for idx, feature_maps in zip(layer_indices, all_layers_feature_maps):
     if len(w) == 2:
         kernel, biases = w
         if len(kernel) == 3:
-            print(np.shape(kernel))
             k_width, k_height, f_in, f_out = np.shape(kernel)
             # print(kernel[:, :, 2, 63])
 
             # Visualize filters
             fig, axs = plt.subplots(nrows=square, ncols=square, figsize=(15, 15))
-            fig.patch.set_facecolor('black')
+            fig.patch.set_facecolor('yellow')
 
             f = 0
             for r in range(square):
@@ -56,7 +55,7 @@ for idx, feature_maps in zip(layer_indices, all_layers_feature_maps):
 
             # Visualize feature maps
             fig, axs = plt.subplots(nrows=square, ncols=square, figsize=(15, 15))
-            fig.patch.set_facecolor('black')
+            fig.patch.set_facecolor('yellow')
 
             f = 0
             for r in range(square):
@@ -65,6 +64,7 @@ for idx, feature_maps in zip(layer_indices, all_layers_feature_maps):
                     axs[r][c].axis('off')
                     f += 1
 
-            plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)
+            # plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)
+            plt.tight_layout()
             plt.savefig('../data/plots/feature_maps_{}.jpg'.format(idx))
             plt.close()

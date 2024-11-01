@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 import matplotlib.pyplot as plt
@@ -23,6 +24,7 @@ for i in range(100):
     axs[i].axis('off')
 
 plt.tight_layout()
+os.makedirs('../data/plots/', exist_ok=True)
 plt.savefig('../data/plots/mnist_{}_100.jpg'.format(ds_name))
 plt.close()
 
