@@ -13,8 +13,8 @@ from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.callbacks import ModelCheckpoint
 
 # Load train and test data
-# ((train_images, train_labels), (val_images, val_labels)), ds_name = mnist.load_data(), 'digits'  # 0.99
-((train_images, train_labels), (val_images, val_labels)), ds_name = fashion_mnist.load_data(), 'fashion'  # 0.91
+((train_images, train_labels), (val_images, val_labels)), ds_name = mnist.load_data(), 'digits'  # 0.99
+# ((train_images, train_labels), (val_images, val_labels)), ds_name = fashion_mnist.load_data(), 'fashion'  # 0.91
 
 # Plot 100 training images
 fig, ax = plt.subplots(nrows=10, ncols=10, figsize=(10, 10))
@@ -44,24 +44,24 @@ val_labels = to_categorical(val_labels)
 nclasses = np.shape(train_labels)[1]
 
 # Define hyperparameters in dictionary for flexible use
-config = {'conv_layers': 1,
-          'conv_filters': 8,
+config = {'conv_layers': 3,
+          'conv_filters': 32,
           'conv_kernel_size': 3,
           'conv_initializer': 'he_uniform',
           'conv_padding': 'same',
           'conv_activation_function': 'relu',
-          'conv_dropout_rate': 0,
+          'conv_dropout_rate': 0.1,
           'maxpool_stride': 2,
           'maxpool_kernel_size': 2,
           'fc_layers': 2,
-          'fc_neurons': 8,
+          'fc_neurons': 32,
           'fc_activation_function': 'relu',
           'fc_initializer': 'he_uniform',
           'fc_dropout_rate': 0,
-          'learning_rate': 0.5,
+          'learning_rate': 0.01,
           'momentum': 0.0,
           'loss': 'categorical_crossentropy',
-          'epochs': 2}
+          'epochs': 30}
 
 # Define model architecture
 model = Sequential()
