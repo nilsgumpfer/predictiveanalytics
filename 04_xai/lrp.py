@@ -11,7 +11,7 @@ model = VGG16(weights='imagenet')
 model.layers[-1].activation = None
 
 # Load example image
-img, x = load_image('../data/castle.jpg')
+img, x = load_image('../data/leopard.png')
 
 # Calculate relevancemaps
 R1 = calculate_relevancemap('gradient', np.array(x), model, neuron_selection=None)  # TODO: adjust neuron selection
