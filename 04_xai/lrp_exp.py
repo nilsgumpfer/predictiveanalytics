@@ -4,6 +4,7 @@ from PIL import ImageEnhance
 from signxai.methods.wrappers import calculate_relevancemap
 from signxai.utils.utils import (load_image, aggregate_and_normalize_relevancemap_rgb)
 from tensorflow.keras.applications.vgg16 import VGG16
+from tensorflow.keras.preprocessing import image
 
 def reverse_preprocess_image(x):
     # Undo zero-centering based on ImageNet mean RGB values
@@ -17,6 +18,37 @@ def reverse_preprocess_image(x):
 
     return np.array(x, dtype=int)
 
+
+def get_image(img_path, brightness=1.0, contrast=1.0, expand_dims=False):
+    # Load image
+    img = image.load_img(img_path, target_size=(224, 224))
+
+    # Adjust contrast
+    enhancer = ImageEnhance.Contrast(img)
+    img = enhancer.enhance(contrast)
+
+    # Array conversion
+    x = image.img_to_array(img)
+
+    # Adjust brightness
+    x = x * brightness
+    x = np.clip(x, a_min=0, a_max=255)
+    img = np.array(x, dtype=int)
+
+    if expand_dims:
+        x = np.expand_dims(x, axis=0)
+
+    # 'RGB'->'BGR'
+    x = x[..., ::-1]
+
+    # Zero-centering based on ImageNet mean RGB values
+    mean = [103.939, 116.779, 123.68]
+    x[..., 0] -= mean[0]
+    x[..., 1] -= mean[1]
+    x[..., 2] -= mean[2]
+
+    return img, x
+
 def main():
     # Load model
     model = VGG16(weights='imagenet')
@@ -25,8 +57,10 @@ def main():
     model.layers[-1].activation = None
 
     # Load example image
-    # img, x = load_image('../data/Screenshot from 2024-12-06 15-31-11.png')
-    img, x = load_image('../data/tigershark.jpg')
+    img, x = get_image('../data/cobra.png', contrast=0.9)
+    # img, x = get_image('../data/Screenshot from 2024-12-06 15-31-11.png', contrast=0.9)
+    # img, x = get_image('../data/tigershark.jpg', contrast=0.9)
+    # img, x = get_image('../data/zebra.jpeg', contrast=0.9)
 
     # Calculate relevancemaps
     # R0 = calculate_relevancemap('lrpz_epsilon_0_1_std_x', np.array(x), model, neuron_selection=None)
@@ -45,23 +79,23 @@ def main():
     R1 = aggregate_and_normalize_relevancemap_rgb(R1)
     R2 = aggregate_and_normalize_relevancemap_rgb(R2)
 
-    img2 = ImageEnhance.Contrast(img).enhance(0.1)
-    img = np.array(img)
+    # img2 = ImageEnhance.Contrast(img).enhance(0.1)
+    # img = np.array(img)
 
-    R0_img = np.array(img2)
+    R0_img = np.ones_like(img) * 255
     R0_img[R0 > 0.05] = img[R0 > 0.05]
-    # R0[R0 > 0.05] = R0[R0 > 0.05] * 3
+    R0[R0 > 0.05] = R0[R0 > 0.05] * 3
 
-    R1_img = np.array(img2)
+    R1_img = np.ones_like(img) * 255
     R1_img[R1 > 0.05] = img[R1 > 0.05]
-    # R1[R1 > 0.05] = R1[R1 > 0.05] * 3
+    R1[R1 > 0.05] = R1[R1 > 0.05] * 3
 
-    R2_img = np.array(img2)
+    R2_img = np.ones_like(img) * 255
     R2_img[R2 > 0.05] = img[R2 > 0.05]
-    # R2[R2 > 0.05] = R2[R2 > 0.05] * 3
+    R2[R2 > 0.05] = R2[R2 > 0.05] * 3
 
     # Visualize heatmaps
-    fig, axs = plt.subplots(ncols=5, nrows=2, figsize=(25, 20))
+    fig, axs = plt.subplots(ncols=5, nrows=2, figsize=(30, 12))
     axs[0][0].imshow(img)
     axs[1][0].imshow(x_grad)
 
