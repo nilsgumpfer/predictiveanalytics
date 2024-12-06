@@ -43,8 +43,8 @@ def train_MLP(X, y, random_seed=0):
 
     # Build model
     model = Sequential([
-        Dense(4, activation='relu', input_shape=(2,)),  # 4 neurons in the hidden layer
-        Dense(1, activation='sigmoid')  # 1 neuron for binary output
+        Dense(4, activation='relu', input_shape=(2,)),
+        Dense(1, activation='sigmoid')
     ])
 
     # Compile model
@@ -60,7 +60,7 @@ def train_MLP(X, y, random_seed=0):
     return model(X).numpy()
 
 
-def train(epochs, learning_rate):
+def train():
     np.random.seed(1)
     X, Y = generate_data()
     Y = Y.reshape((-1, 1))
@@ -70,4 +70,4 @@ def train(epochs, learning_rate):
     plot_training_data_and_activations(X, Y, pred)
 
 
-train(epochs=10000, learning_rate=0.011)
+train()
