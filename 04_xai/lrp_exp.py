@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import ImageEnhance
+from signxai.methods.signed import calculate_sign_mu
 from signxai.methods.wrappers import calculate_relevancemap
 from signxai.utils.utils import (load_image, aggregate_and_normalize_relevancemap_rgb)
 from tensorflow.keras.applications.vgg16 import VGG16
@@ -49,6 +50,14 @@ def get_image(img_path, brightness=1.0, contrast=1.0, expand_dims=False):
 
     return img, x
 
+
+# def gradient_by_input(g, x):
+#     res = g * calculate_sign_mu(x)
+#     res[]
+# TODO: sensitivity != relevance -> dark areas can have high sensitivity (pos+neg) to induce patterns
+
+
+
 def main():
     # Load model
     model = VGG16(weights='imagenet')
@@ -57,7 +66,9 @@ def main():
     model.layers[-1].activation = None
 
     # Load example image
-    img, x = get_image('../data/cobra.png', contrast=0.9)
+    img, x = get_image('../data/cobra.png')
+    # img, x = get_image('../data/zebra.jpeg')
+    # img, x = get_image('../data/rooster.jpg', contrast=0.5, brightness=1.2)
     # img, x = get_image('../data/Screenshot from 2024-12-06 15-31-11.png', contrast=0.9)
     # img, x = get_image('../data/tigershark.jpg', contrast=0.9)
     # img, x = get_image('../data/zebra.jpeg', contrast=0.9)
@@ -70,9 +81,10 @@ def main():
     R0 = calculate_relevancemap('gradient_x_input', np.array(x), model, neuron_selection=None)
     R1 = calculate_relevancemap('gradient', np.array(x), model, neuron_selection=None)
     R2 = calculate_relevancemap('gradient_x_sign', np.array(x), model, neuron_selection=None)
+    # R2 = gradient_by_input(R1, x)
 
     R1_n = R1 / np.max(np.abs(np.ravel(R1)))
-    x_grad = x + 255 * R1_n
+    x_grad = x + 200 * R1_n
     x_grad = reverse_preprocess_image(x_grad)
 
     R0 = aggregate_and_normalize_relevancemap_rgb(R0)
@@ -125,5 +137,52 @@ def main():
     plt.savefig('example.pdf', dpi=500)
 
 
+def channel_wise():
+    # Load model
+    model = VGG16(weights='imagenet')
+
+    #  Remove last layer's softmax activation (we need the raw values!)
+    model.layers[-1].activation = None
+
+    # Load example image
+    # img, x = get_image('../data/rooster.jpg')
+    # img, x = get_image('../data/zebra.jpeg')
+    img, x = get_image('../data/cobra.png')
+
+    # Visualize heatmaps
+    fig, axs = plt.subplots(ncols=6, nrows=3, figsize=(30, 15))
+
+    # Channel-wise iteration
+    for ch in [0, 1, 2]:
+        cmap = {0: 'Blues', 1: 'Greens', 2: 'Reds'}[ch]
+
+        R0 = calculate_relevancemap('gradient_x_input', np.array(x), model, neuron_selection=None)[..., ch]
+        R1 = calculate_relevancemap('gradient', np.array(x), model, neuron_selection=None)[..., ch]
+        R2 = calculate_relevancemap('gradient_x_sign', np.array(x), model, neuron_selection=None)[..., ch]
+
+        R0 = R0 / np.max(np.abs(np.ravel(R0)))
+        R1 = R1 / np.max(np.abs(np.ravel(R1)))
+        R2 = R2 / np.max(np.abs(np.ravel(R2)))
+        x_ch = x[..., ch] / np.max(np.abs(np.ravel(x[..., ch])))
+
+        axs[ch][0].imshow(img)
+        axs[ch][1].matshow(img[..., ch], cmap=cmap, clim=(0, 255))
+
+        axs[ch][2].set_title('Gradient x Input')
+        axs[ch][2].matshow(R0, cmap='seismic', clim=(-1, 1))
+
+        axs[ch][3].set_title('Gradient')
+        axs[ch][3].matshow(R1, cmap='seismic', clim=(-1, 1))
+
+        axs[ch][4].set_title('Gradient x SIGN')
+        axs[ch][4].matshow(R2, cmap='seismic', clim=(-1, 1))
+
+        axs[ch][5].set_title('Pos/Neg')
+        axs[ch][5].matshow(x_ch, cmap='seismic', clim=(-1, 1))
+
+    plt.tight_layout()
+    plt.savefig('channel_wise.pdf'.format(ch), dpi=500)
+
 if __name__ == '__main__':
     main()
+    # channel_wise()
