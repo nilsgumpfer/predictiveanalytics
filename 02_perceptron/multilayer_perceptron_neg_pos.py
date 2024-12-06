@@ -1,11 +1,15 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
+from signxai.utils.utils import remove_softmax
 from sklearn.model_selection import train_test_split
 
 from tensorflow.python.keras import Sequential
 from tensorflow.python.keras.layers import Dense
+from tensorflow.python.keras.models import save_model, load_model
 from tensorflow.python.training.adam import AdamOptimizer
+from tensorflow.python.keras.callbacks import ModelCheckpoint
+import tensorflow as tf
 
 
 def generate_data():
@@ -15,13 +19,19 @@ def generate_data():
 
     X = np.concatenate((X_cls1, X_cls2))
 
+    X_r = np.zeros((np.shape(X)[0], np.shape(X)[1]+1))
+    X_r[..., 0] = X[..., 0]
+    X_r[..., 1] = X[..., 1]
+    X_r[..., 2] = np.random.normal(0, 1, size=np.shape(X)[0])
+
     Y = np.concatenate((np.ones(50), np.ones(50), np.zeros(50), np.zeros(50)))
 
-    return X, Y
+    # return X, Y
+    return X_r, Y
 
 
 def plot_training_data(X, Y):
-    plt.scatter(x=X[:, 0], y=X[:, 1], c=Y, cmap='bwr')
+    plt.scatter(x=X[:, 0], y=X[:, 2], c=Y, cmap='bwr')
     plt.show()
 
 
@@ -43,7 +53,7 @@ def train_MLP(X, y, random_seed=0):
 
     # Build model
     model = Sequential([
-        Dense(4, activation='relu', input_shape=(2,)),
+        Dense(3, activation='relu', input_shape=(np.shape(X)[-1],)),
         Dense(1, activation='sigmoid')
     ])
 
@@ -52,8 +62,10 @@ def train_MLP(X, y, random_seed=0):
                   loss='binary_crossentropy',
                   metrics=['accuracy'])
 
+    checkpoint_callback = ModelCheckpoint(filepath='MLP.h5', monitor='val_accuracy', mode='max', save_best_only=True)
+
     # Train model
-    history = model.fit(X, y, epochs=250, validation_data=(X_test, y_test))
+    history = model.fit(X, y, epochs=200, validation_data=(X_test, y_test), callbacks=[checkpoint_callback])
 
     print('Accuracy:', max(history.history['accuracy']))
 
@@ -65,9 +77,42 @@ def train():
     X, Y = generate_data()
     Y = Y.reshape((-1, 1))
 
+    # plot_training_data(X, Y)
+    # plot_training_data_and_activations(X, Y, X[..., 2])
+
     pred = train_MLP(X, Y)
 
     plot_training_data_and_activations(X, Y, pred)
 
 
-train()
+def explain():
+    # XOR data
+    X = np.array([[-1, -1, 1], [-1, 1, 1], [1, -1, 1], [1, 1, 1]])
+    X = X / 2
+    Y = np.array([1, 0, 0, 1])
+
+    model = load_model('MLP.h5')
+    # model = remove_softmax(load_model('MLP.h5'))
+
+    # Select a few samples for explanation
+    sample_inputs = tf.convert_to_tensor(X, dtype=tf.float32)
+
+    # Gradient computation
+    with tf.GradientTape() as tape:
+        tape.watch(sample_inputs)  # Watch the input tensor
+        predictions = model(sample_inputs)  # Forward pass
+
+    # Compute the gradients of the first output neuron w.r.t. the inputs
+    gradients = tape.gradient(predictions, sample_inputs).numpy()
+
+    print(np.round(gradients, 2))
+
+
+def main():
+    # train()
+    explain()
+
+
+
+if __name__ == '__main__':
+    main()
