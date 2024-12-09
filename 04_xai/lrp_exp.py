@@ -55,6 +55,7 @@ def get_image(img_path, brightness=1.0, contrast=1.0, expand_dims=False):
 #     res = g * calculate_sign_mu(x)
 #     res[]
 # TODO: sensitivity != relevance -> dark areas can have high sensitivity (pos+neg) to induce patterns
+# TODO: mu could be rooted in separation value of convolutional filters (dark to bright)
 
 
 
@@ -74,66 +75,43 @@ def main():
     # img, x = get_image('../data/zebra.jpeg', contrast=0.9)
 
     # Calculate relevancemaps
-    # R0 = calculate_relevancemap('lrpz_epsilon_0_1_std_x', np.array(x), model, neuron_selection=None)
-    # R1 = R0 / np.array(x)
-    # R2 = calculate_relevancemap('lrpsign_epsilon_0_1_std_x', np.array(x), model, neuron_selection=None)
-
     R0 = calculate_relevancemap('gradient_x_input', np.array(x), model, neuron_selection=None)
     R1 = calculate_relevancemap('gradient', np.array(x), model, neuron_selection=None)
     R2 = calculate_relevancemap('gradient_x_sign', np.array(x), model, neuron_selection=None)
-    # R2 = gradient_by_input(R1, x)
 
     R1_n = R1 / np.max(np.abs(np.ravel(R1)))
-    x_grad = x + 200 * R1_n
-    x_grad = reverse_preprocess_image(x_grad)
+    x_grad = x + 512 * R1_n
+    img_grad = reverse_preprocess_image(np.array(x_grad))
 
     R0 = aggregate_and_normalize_relevancemap_rgb(R0)
     R1 = aggregate_and_normalize_relevancemap_rgb(R1)
     R2 = aggregate_and_normalize_relevancemap_rgb(R2)
 
-    # img2 = ImageEnhance.Contrast(img).enhance(0.1)
-    # img = np.array(img)
-
-    R0_img = np.ones_like(img) * 255
-    R0_img[R0 > 0.05] = img[R0 > 0.05]
-    R0[R0 > 0.05] = R0[R0 > 0.05] * 3
-
-    R1_img = np.ones_like(img) * 255
-    R1_img[R1 > 0.05] = img[R1 > 0.05]
-    R1[R1 > 0.05] = R1[R1 > 0.05] * 3
-
-    R2_img = np.ones_like(img) * 255
-    R2_img[R2 > 0.05] = img[R2 > 0.05]
-    R2[R2 > 0.05] = R2[R2 > 0.05] * 3
-
     # Visualize heatmaps
     fig, axs = plt.subplots(ncols=5, nrows=2, figsize=(30, 12))
     axs[0][0].imshow(img)
-    axs[1][0].imshow(x_grad)
+    axs[1][0].imshow(img_grad)
 
     # axs[0][1].set_title('LRP-z')
     axs[0][1].set_title('Gradient x Input')
     axs[0][1].matshow(R0, cmap='seismic', clim=(-1, 1))
-    axs[1][1].imshow(R0_img)
+    axs[1][1].imshow(img_grad)
 
     # axs[0][2].set_title('LRP-z / x')
     axs[0][2].set_title('Gradient')
     axs[0][2].matshow(R1, cmap='seismic', clim=(-1, 1))
-    axs[1][2].imshow(R1_img)
+    axs[1][2].imshow(img_grad)
 
     # axs[0][3].set_title('LRP-SIGN')
     axs[0][3].set_title('Gradient x SIGN')
     axs[0][3].matshow(R2, cmap='seismic', clim=(-1, 1))
-    axs[1][3].imshow(R2_img)
+    axs[1][3].imshow(img_grad)
 
     axs[0][4].set_title('Pos/Neg')
     axs[0][4].matshow(aggregate_and_normalize_relevancemap_rgb(x), cmap='seismic', clim=(-1, 1))
-    axs[1][4].matshow(aggregate_and_normalize_relevancemap_rgb(x), cmap='seismic', clim=(-1, 1))
-
+    axs[1][4].matshow(aggregate_and_normalize_relevancemap_rgb(x_grad), cmap='seismic', clim=(-1, 1))
 
     plt.tight_layout()
-
-    # plt.show()
     plt.savefig('example.pdf', dpi=500)
 
 
