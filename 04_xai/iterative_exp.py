@@ -214,7 +214,7 @@ def adjust(img_name, trgt_idx):
 
     paths = []
 
-    for i in range(150):
+    for i in range(100):
         print(i)
 
         # Apply grad to x
@@ -244,7 +244,7 @@ def adjust(img_name, trgt_idx):
     generate_animation_from_plots('../data/plots/adjust_{}_{}.webp'.format(img_name[:-4], trgt_idx), paths, cleanup=True)
 
 
-def explain(img_name, trgt_idx, n=10):
+def explain(img_name, trgt_idx, n=10, method='gradient'):
     # Load model
     model = VGG16(weights='imagenet')
 
@@ -268,8 +268,14 @@ def explain(img_name, trgt_idx, n=10):
             x = clip_x(x)
 
         # Calculate gradient
-        G = calculate_relevancemap('gradient', np.array(x), model, neuron_selection=trgt_idx)
+        if method == 'gradient':
+            G = calculate_relevancemap('gradient', np.array(x), model, neuron_selection=trgt_idx)
+        else:
+            G = calculate_relevancemap(method, np.array(x), model, neuron_selection=trgt_idx) / np.array(x)
+
+        # SIGN-adjustment
         explanations[..., i] = G * calculate_sign_mu(x)
+
 
     # Visualize result
     fig, axs = plt.subplots(ncols=4, nrows=1, figsize=(24, 6))
@@ -283,40 +289,34 @@ def explain(img_name, trgt_idx, n=10):
     axs[3].imshow(aggregate_and_normalize_relevancemap_rgb(np.mean(explanations, axis=2)), cmap='seismic', clim=(-1, 1))
 
     plt.tight_layout()
-    plot_path = '../data/plots/explain_{}_{}.jpg'.format(img_name[:-4], trgt_idx)
+    plot_path = '../data/plots/explain_{}_{}_{}.jpg'.format(img_name[:-4], trgt_idx, method)
     plt.savefig(plot_path)
+    plt.close()
 
 
 if __name__ == '__main__':
-    # adjust('hen3.jpg', 7) #--> disputation?
+    # adjust('hen3.jpg', 7) #--> disputation
     # main('tigershark3.png', False)
     # main('tigershark3.png', True)
-    # adjust('giraffe.jpg', 130)  # --> disputation?
-    # adjust('giraffe.jpg', 352)
-    # adjust('giraffe.jpg', 353)
-    # adjust('giraffe.jpg', 276)
-    # generate('treefrog', 31, randm=True)
+    # adjust('giraffe.jpg', 130)
     # generate('flamingo', 130, randm=True)
     # main('cobra.png', True)
-    # main('cobra.png', False)
 
-    # adjust('savanne.jpg', 352)
     # adjust('impalas.png', 352)
 
-    # adjust('forest.png', 483) --> disputation
-    # adjust('forest2.jpg', 888)
-    # adjust('tal2.jpg', 483)
-    # adjust('glencoe.jpg', 483)
-    # adjust('valley.jpg', 483)
+    # adjust('forest.png', 483) # --> disputation?
+    # adjust('eltz.jpg', 483)
 
-    explain('impalas.png', 352, n=10)
-    explain('rooster.jpg', 7, n=10)
-    explain('hen3.jpg', 7, n=10)
-    explain('hen3.jpg', 8, n=10)
-    explain('castlebicycle.jpg', 483, n=10)
-    explain('castlebicycle.jpg', 671, n=10)
-    explain('elephant.jpg', 386, n=10)
-    explain('cobra.png', 63, n=10)
+    for m in ['gradient', 'lrpz_epsilon_0_1_std_x', 'lrpz_epsilon_0_25_std_x', 'lrpz_epsilon_0_5_std_x']:
+        explain('impalas.png', 352, n=10, method=m)
+        explain('rooster.jpg', 7, n=10, method=m)
+        explain('hen3.jpg', 7, n=10, method=m)
+        explain('castlebicycle.jpg', 483, n=10, method=m)
+        explain('castlebicycle.jpg', 671, n=10, method=m)
+        explain('elephant.jpg', 386, n=10, method=m)
+        explain('cobra.png', 63, n=10, method=m)
+        explain('eltz2.png', 483, n=4, method=m)
+        explain('bodiamcastle.jpg', 483, n=10, method=m)
 
 
     # TODO: mean gradient over adjustment iterations
