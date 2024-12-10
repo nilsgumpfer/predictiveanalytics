@@ -198,7 +198,7 @@ def clip_x(x):
     return preprocess_image(np.clip(tmp, 0, 255))
 
 
-def adjust(img_name, trgt_idx):
+def adjust(img_name, trgt_idx, n=100):
     # Load model
     model = VGG16(weights='imagenet')
     model_softmax = VGG16(weights='imagenet')
@@ -214,7 +214,7 @@ def adjust(img_name, trgt_idx):
 
     paths = []
 
-    for i in range(100):
+    for i in range(n):
         print(i)
 
         # Apply grad to x
@@ -307,17 +307,18 @@ if __name__ == '__main__':
     # adjust('forest.png', 483) # --> disputation?
     # adjust('eltz.jpg', 483)
 
-    for m in ['gradient', 'lrpz_epsilon_0_1_std_x', 'lrpz_epsilon_0_25_std_x', 'lrpz_epsilon_0_5_std_x']:
-        explain('impalas.png', 352, n=10, method=m)
-        explain('rooster.jpg', 7, n=10, method=m)
-        explain('hen3.jpg', 7, n=10, method=m)
-        explain('castlebicycle.jpg', 483, n=10, method=m)
-        explain('castlebicycle.jpg', 671, n=10, method=m)
-        explain('elephant.jpg', 386, n=10, method=m)
-        explain('cobra.png', 63, n=10, method=m)
-        explain('eltz2.png', 483, n=4, method=m)
-        explain('bodiamcastle.jpg', 483, n=10, method=m)
+    # for m in ['gradient', 'lrpz_epsilon_0_1_std_x', 'lrpz_epsilon_0_25_std_x']:
+    #     explain('impalas.png', 352, n=10, method=m)
+    #     explain('rooster.jpg', 7, n=10, method=m)
+    #     explain('hen3.jpg', 7, n=10, method=m)
+    #     explain('castlebicycle.jpg', 483, n=10, method=m)
+    #     explain('castlebicycle.jpg', 671, n=10, method=m)
+    #     explain('elephant.jpg', 386, n=10, method=m)
+    #     explain('cobra.png', 63, n=10, method=m)
+    #     explain('eltz2.png', 483, n=4, method=m)
+    #     explain('bodiamcastle.jpg', 483, n=10, method=m)
 
+    adjust('storch2.jpg', 130, n=200)
 
     # TODO: mean gradient over adjustment iterations
 
