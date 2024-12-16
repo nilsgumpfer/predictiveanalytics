@@ -198,7 +198,7 @@ def clip_x(x):
     return preprocess_image(np.clip(tmp, 0, 255))
 
 
-def adjust(img_name, trgt_idx, n=100):
+def adjust(img_name, trgt_idx, n=100, clip=True):
     # Load model
     model = VGG16(weights='imagenet')
     model_softmax = VGG16(weights='imagenet')
@@ -220,7 +220,9 @@ def adjust(img_name, trgt_idx, n=100):
         # Apply grad to x
         if i > 0:
             x = x + 16 * (G / np.max(np.abs(np.ravel(G))))
-            x = clip_x(x)
+
+            if clip:
+                x = clip_x(x)
 
         # Calculate gradient
         G = calculate_relevancemap('gradient', np.array(x), model, neuron_selection=trgt_idx)
@@ -264,28 +266,27 @@ def explain(img_name, trgt_idx, n=10, method='gradient'):
 
         # Apply grad to x
         if i > 0:
-            x = x + 16 * (G / np.max(np.abs(np.ravel(G))))
+            a = 16 * (G / np.max(np.abs(np.ravel(G))))
+            x += a
             x = clip_x(x)
 
-        # Calculate gradient
-        if method == 'gradient':
-            G = calculate_relevancemap('gradient', np.array(x), model, neuron_selection=trgt_idx)
-        else:
-            G = calculate_relevancemap(method, np.array(x), model, neuron_selection=trgt_idx) / np.array(x)
+        # Calculate explanation
+        G = calculate_relevancemap(method, np.array(x), model, neuron_selection=trgt_idx)
+        if method != 'gradient':
+            G /= np.array(x)
 
         # SIGN-adjustment
         explanations[..., i] = G * calculate_sign_mu(x)
 
-
     # Visualize result
     fig, axs = plt.subplots(ncols=4, nrows=1, figsize=(24, 6))
-    axs[0].set_title('Image 0')
+    axs[0].set_title('Image (i=0)')
     axs[0].imshow(img)
-    axs[1].set_title('Gradient 0')
+    axs[1].set_title('Explanation (i=0)')
     axs[1].imshow(aggregate_and_normalize_relevancemap_rgb(explanations[..., 0]), cmap='seismic', clim=(-1, 1))
-    axs[2].set_title('Image gen')
+    axs[2].set_title('Adjusted Image (i={})'.format(n-1))
     axs[2].imshow(reverse_preprocess_image(np.array(x)))
-    axs[3].set_title('Gradient mean')
+    axs[3].set_title('Mean Explanation (n={})'.format(n))
     axs[3].imshow(aggregate_and_normalize_relevancemap_rgb(np.mean(explanations, axis=2)), cmap='seismic', clim=(-1, 1))
 
     plt.tight_layout()
@@ -307,18 +308,22 @@ if __name__ == '__main__':
     # adjust('forest.png', 483) # --> disputation?
     # adjust('eltz.jpg', 483)
 
-    # for m in ['gradient', 'lrpz_epsilon_0_1_std_x', 'lrpz_epsilon_0_25_std_x']:
-    #     explain('impalas.png', 352, n=10, method=m)
-    #     explain('rooster.jpg', 7, n=10, method=m)
-    #     explain('hen3.jpg', 7, n=10, method=m)
-    #     explain('castlebicycle.jpg', 483, n=10, method=m)
-    #     explain('castlebicycle.jpg', 671, n=10, method=m)
-    #     explain('elephant.jpg', 386, n=10, method=m)
-    #     explain('cobra.png', 63, n=10, method=m)
-    #     explain('eltz2.png', 483, n=4, method=m)
-    #     explain('bodiamcastle.jpg', 483, n=10, method=m)
+    for m in ['gradient', 'lrpz_epsilon_0_1_std_x', 'lrpz_epsilon_0_25_std_x']:
+        # explain('impalas.png', 352, n=10, method=m)
+        # explain('rooster.jpg', 7, n=10, method=m)
+        # explain('hen3.jpg', 7, n=10, method=m)
+        # explain('castlebicycle.jpg', 483, n=10, method=m)
+        # explain('castlebicycle.jpg', 671, n=10, method=m)
+        # explain('elephant.jpg', 386, n=10, method=m)
+        # explain('cobra.png', 63, n=10, method=m)
+        # explain('eltz2.png', 483, n=4, method=m)
+        # explain('bodiamcastle.jpg', 483, n=10, method=m)
+        explain('11425971435_3cedb1ac05_c.jpg', 9, n=10, method=m)
+        explain('shark.png', 2, n=10, method=m)
+        explain('zebra-10.jpg', 340, n=10, method=m)
+        explain('zebra-14.jpg', 340, n=10, method=m)
+        explain('zebra-16.jpg', 340, n=10, method=m)
+        explain('zebra.jpeg', 340, n=10, method=m)
 
-    adjust('storch2.jpg', 130, n=200)
-
-    # TODO: mean gradient over adjustment iterations
-
+    # adjust('cobra.png', 63, n=200)
+    # adjust('storch2.jpg', 130, n=200)
